@@ -1,13 +1,13 @@
 # Start git server  https://github.com/jkarlosb/git-server-docker
 # Hacks due to limitations on use of compose with docker IO resource limits, boo
 LOCAL_DIR="$(pwd)"
-docker run -d -p 2222:22 \
-   -h gitserver
+docker run --rm -d -p 2222:22 \
+   -h gitserver \
    -v "$LOCAL_DIR/gitserver/keys:/git-server/keys" \
    -v "$LOCAL_DIR/gitserver/:/git-server/repos" \
    jkarlos/git-server-docker
 
-# TODO generate pubkey
+# TODO generate pubkey with ssh-keygen -t rsa
 JENKINS_PUB_KEY='nope'
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
