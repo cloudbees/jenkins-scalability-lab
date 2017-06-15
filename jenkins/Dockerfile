@@ -1,5 +1,9 @@
-FROM jenkinsci/jenkins:2.32.3.1
+FROM jenkinsci/jenkins:2.32.3
 MAINTAINER svanoort
+
+# Workaround for bug in plugin.sh script where it tries to remove nonexistent lock
+RUN mkdir -p /usr/share/jenkins/ref/plugins
+RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock
 
 # Basic config
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt

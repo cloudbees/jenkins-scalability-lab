@@ -1,1 +1,1 @@
-# Add my base plugins
+workflow-api:2.12
