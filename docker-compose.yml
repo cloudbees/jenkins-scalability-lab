@@ -1,0 +1,35 @@
+# Won't work due to resource limits not working in compose
+version: "3"
+services:
+  gitserver:
+    image: jkarlos/git-server-docker
+    # TODO less hacky volume mounting
+    volumes: 
+      - "${CONFIG_DIR}"/git-server/keys:/git-server/keys 
+      - "${CONFIG_DIR}"/git-server/repos:/git-server/repos
+    container_name: gitserver
+    hostname: gitserver
+
+    # Port for git push by SSD
+    # TBD deploy:placement for docker swarm to run it on separate host
+    ports: 
+      - "2222:22"
+
+  jenkins:
+    container_name: jenkins
+  #  build: ./jenkins
+    hostname: jenkins
+    volumes: 
+      - "${CONFIG_DIR}"/jenkins_home:/var/jenkins_home
+    # TBD deploy:placement for docker swarm to run it on separate host
+    depends_on:
+      - gitserver
+    links: 
+      - gitserver
+    # Deploy needs resource limits
+    ports:
+      - "8080:8080"
+
+  agents:
+    container_name: agents
+    hostname: agents
