@@ -30,6 +30,7 @@ docker build -t jenkins-scalability-master:1.0 ./jenkins
 # Run jenkins
 docker run -it --rm \
   --device-write-iops /dev/vda:200 --device-write-bps /dev/vda:100mb --device-read-iops /dev/vda:200 --device-read-bps /dev/vda:100mb \
-  -p 8080:8080 -p 50000:50000 \
-  -v /Users/svanoort/Documents/jenkins-scalability-lab/jenkinsjenkins_home:/var/jenkins_home \
-  jenkinsci/jenkins:lts
+  -p 8080:8080 \
+  --link gitserver $AGENT_LINKS\
+  -v /Users/svanoort/Documents/jenkins-scalability-lab/jenkins/jenkins_home:/var/jenkins_home \
+  jenkins-scalability-master:1.0
