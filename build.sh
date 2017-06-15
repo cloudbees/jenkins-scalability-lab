@@ -12,15 +12,17 @@ docker run --rm -d -p 2222:22 \
 JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
+AGENT_LIST=""
+AGENT_LINKS=""
 for (( c=1; c<=4; c++ )); do
+    AGENT_NAME="agent-${c}"
     docker run -d --rm \
-      -h "agent-${c}" --name "agent-${c}" --link gitserver \
+      -h "$AGENT_NAME" --name "$AGENT_NAME" --link gitserver \
       jenkinsci/ssh-slave "$JENKINS_PUB_KEY"
+    AGENT_LIST="$AGENT_LIST $AGENT_NAME"
+    AGENT_LINKS="$AGENT_LINKS --link $AGENT_NAME"
     # TODO create a string of all agent names
 done
-
-docker run --link gitserver --rm jenkinsci/ssh-slave "<public key>"
-
 
 # Build jenkins
 docker build -t jenkins-scalability-master:1.0 ./jenkins
