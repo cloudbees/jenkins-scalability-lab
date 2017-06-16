@@ -5,14 +5,14 @@ docker run --rm -d -p 2222:22 \
    -h gitserver \
    --name gitserver \
    -v "$LOCAL_DIR/gitserver/keys:/git-server/keys" \
-   -v "$LOCAL_DIR/gitserver/:/git-server/repos" \
+   -v "$LOCAL_DIR/gitserver/repos:/git-server/repos" \
    jkarlos/git-server-docker
 
 # TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
 mkdir -p gitserver/keys || true
 ssh-keygen -t rsa -n "" -P "" -f id_rsa \
     && cp id_rsa.pub gitserver/keys \
-    && cp id_rsa jenkins
+    && cp id_rsa* jenkins
 JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
@@ -32,7 +32,7 @@ done
 docker build -t jenkins-scalability-master:1.0 ./jenkins
 
 # Run jenkins
-docker run -it --rm \
+docker run -it --rm  -h jenkins --name jenkins \
   --device-write-iops /dev/vda:200 --device-write-bps /dev/vda:100mb --device-read-iops /dev/vda:200 --device-read-bps /dev/vda:100mb \
   -p 8080:8080 \
   --link gitserver $AGENT_LINKS\

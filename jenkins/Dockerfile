@@ -18,4 +18,4 @@ COPY jenkins.* /usr/share/jenkins/ref/
 # ENV JENKINS_JAVA_OPTIONS "-Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false"
 
 # RSA key hack
-COPY id_rsa /tmp/id_rsa
+COPY id_rsa* $JENKINS_HOME
