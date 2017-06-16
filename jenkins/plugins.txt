@@ -3,6 +3,8 @@ bouncycastle-api:2.16.0
 branch-api:2.0.8
 credentials:2.1.13
 credentials-binding:1.10
+docker-commons:1.6:not-pinned
+docker-workflow:1.10:not-pinned
 durable-task:1.13
 git:3.1.0
 git-client:2.3.0
