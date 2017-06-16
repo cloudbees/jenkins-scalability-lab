@@ -31,10 +31,20 @@ done
 # Build jenkins
 docker build -t jenkins-scalability-master:1.0 ./jenkins
 
+# Graphite server
+docker run -d \
+  -h graphite --name graphite \
+  -p 81:80 \
+  -p 2003:2003 \
+  -p 8125:8125/udp \
+  hopsoft/graphite-statsd
+
+
 # Run jenkins
 docker run -it --rm  -h jenkins --name jenkins \
   --device-write-iops /dev/vda:200 --device-write-bps /dev/vda:100mb --device-read-iops /dev/vda:200 --device-read-bps /dev/vda:100mb \
   -p 8080:8080 \
+  --link graphite
   --link gitserver $AGENT_LINKS\
   -v /Users/svanoort/Documents/jenkins-scalability-lab/jenkins/jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:1.0
