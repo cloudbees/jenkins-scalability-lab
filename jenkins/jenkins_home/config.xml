@@ -1,7 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson>
-  <disabledAdministrativeMonitors/>
-  <version>1.0</version>
+  <disabledAdministrativeMonitors>
+    <string>hudson.PluginManager$PluginCycleDependenciesMonitor</string>
+    <string>hudsonHomeIsFull</string>
+    <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
+    <string>hudson.diagnosis.TooManyJobsButNoView</string>
+    <string>hudson.model.UpdateCenter$CoreUpdateMonitor</string>
+    <string>jenkins.diagnostics.SecurityIsOffMonitor</string>
+    <string>jenkins.model.Jenkins$EnforceSlaveAgentPortAdministrativeMonitor</string>
+    <string>jenkins.security.RekeySecretAdminMonitor</string>
+    <string>jenkins.security.UpdateSiteWarningsMonitor</string>
+  </disabledAdministrativeMonitors>
+  <version>2.32.3</version>
   <numExecutors>0</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
@@ -16,6 +26,7 @@
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds/>
+  <quietPeriod>0</quietPeriod>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
   <views>
     <hudson.model.AllView>
@@ -34,4 +45,5 @@
   </crumbIssuer>
   <nodeProperties/>
   <globalNodeProperties/>
+  <noUsageStatistics>true</noUsageStatistics>
 </hudson>
