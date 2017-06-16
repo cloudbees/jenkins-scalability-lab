@@ -9,6 +9,10 @@ docker run --rm -d -p 2222:22 \
    jkarlos/git-server-docker
 
 # TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
+mkdir -p gitserver/keys || true
+ssh-keygen -t rsa -n "" -P "" -f id_rsa \
+    && cp id_rsa.pub gitserver/keys \
+    && cp id_rsa jenkins
 JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
