@@ -14,8 +14,10 @@ COPY loadtestsetup.groovy /usr/share/jenkins/ref/init.groovy.d/loadtestsetup.gro
 # prevent install wizard running, but tied to this version
 COPY jenkins.* /usr/share/jenkins/ref/
 
-# Below should work, but DOES NOT, setup wizard still shows up!!!
-# ENV JENKINS_JAVA_OPTIONS "-Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false"
+# Below adds support for attaching a remote debugger
+ENV JENKINS_JAVA_OPTIONS "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
+# Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
+
 
 # RSA key hack
-COPY id_rsa* $JENKINS_HOME
+COPY id_rsa* ${JENKINS_HOME}/

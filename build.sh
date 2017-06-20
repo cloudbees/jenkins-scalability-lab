@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Start git server  https://github.com/jkarlosb/git-server-docker
 # Hacks due to limitations on use of compose with docker IO resource limits, boo
 LOCAL_DIR="$(pwd)"
@@ -32,19 +34,21 @@ done
 docker build -t jenkins-scalability-master:1.0 ./jenkins
 
 # Graphite server
-docker run -d \
+docker run --rm -d \
   -h graphite --name graphite \
   -p 81:80 \
   -p 2003:2003 \
   -p 8125:8125/udp \
   hopsoft/graphite-statsd
 
+# We need the root block device for resource limits, since the device name can change
+ROOT_BLKDEV=$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1)
 
 # Run jenkins
 docker run -it --rm  -h jenkins --name jenkins \
-  --device-write-iops /dev/vda:200 --device-write-bps /dev/vda:100mb --device-read-iops /dev/vda:200 --device-read-bps /dev/vda:100mb \
-  -p 8080:8080 \
-  --link graphite
-  --link gitserver $AGENT_LINKS\
-  -v /Users/svanoort/Documents/jenkins-scalability-lab/jenkins/jenkins_home:/var/jenkins_home \
+  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
+  -p 8080:8080 -p 9011:9011 \
+  --link graphite \
+  --link gitserver $AGENT_LINKS \
+  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:1.0
