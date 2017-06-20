@@ -42,7 +42,7 @@ docker run --rm -d \
   hopsoft/graphite-statsd
 
 # We need the root block device for resource limits, since the device name can change
-ROOT_BLKDEV=$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1)
+ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1)
 
 # Run jenkins
 docker run -it --rm  -h jenkins --name jenkins \
