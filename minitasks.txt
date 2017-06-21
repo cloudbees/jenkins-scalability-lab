@@ -1,0 +1,51 @@
+Jenkins versions: https://hub.docker.com/r/jenkinsci/jenkins/tags/
+Graphite container: https://github.com/hopsoft/docker-graphite-statsd
+
+
+# Minitasks
+X Jenkins server, with plugins.txt and jenkins-home
+X Jenkins server with custom plugins
+X Jenkins server with local jenkins_home
+X Git server
+X External build agent(s)
+
+# Fixes
+- Fix Jenkins user setup for container (use my special scripts)
+    + Alternately, every time do a chown -R jenkins:jenkins $JENKINS_HOME
+- FIX the git checkout from repo: https://github.com/jkarlosb/git-server-docker
+    + git credentialsId: 'jenkins-new',url:'ssh://git@gitserver:22/git-server/repos/sample.git'  (probably invalid repo structure)
+- Agents need to be auto-created by the swarm plugin
+- Agents need to have their SSH keys and hostnames prepopulated on Jenkins
+- Fix the JENKINS_HOME getting wrong user permissions (sigh, again, probably cause of update ctr issues)
+
+# Polish
+- Automate agent setup with Docker swarm
+- Docker compose what I can using docker swarm?
+
+# Basics
+X random-job-builder -- seems to take a while to kick in
+X connect agents
+X metrics
+X metrics reporting -- working on Graphite integration: http://graphite.readthedocs.io/en/latest/config-carbon.html
+   --> just point the jenkins instance at graphite:2003 with prefix jenkins and we're done!, UI at localhost:81
+X Clean up metrics reporting to give fixed or total numbers, not histograms
+
+# Features
+- Linux metrics plugin for IO and network:
+    + Add vmstats - wio, nice, system, cpu steal, etc
+    + Add iostat reporting
+    + Use https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats for raw figures on IO
+    + Network stats: https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-net-statistics
+    + Also: /sys/block/vda/stat and /sys/block/vda/vda1/stat
+- Random job builder: filter for jobs
+- Random job builder: keep queue full
+- Select metrics of interest to report on?
+
+# Metrics key:
+RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJIpsPEy06BRqCgyrDuxR
+
+URL: http://localhost:8080/metrics/RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJIpsPEy06BRqCgyrDuxR/metrics?pretty=true
+
+Need to create metrics key, and then hit API
+
+# Later
