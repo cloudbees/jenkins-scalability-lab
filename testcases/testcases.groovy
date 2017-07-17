@@ -4,9 +4,9 @@ Pipeline Testcases:
 
 - Run lots of trivial echos
 - Highly branched parallel with echos
-- Run complex groovy on its own (selection sort)
+- Run complex groovy on its own (merge sort)
 - Simple pipeline that is expensive to serialize?
-- Mix complex groovy with pipeline steps (selection sort echoing along the way?)
+- Mix complex groovy with pipeline steps (merge sort echoing along the way?)
 - Complex groovy in NonCPS with pipeline steps?
 - Complex groovy in parallel 
 
