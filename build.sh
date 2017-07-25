@@ -1,4 +1,6 @@
 #!/bin/bash
+set -xe
+set -o pipefail
 
 # Start git server  https://github.com/jkarlosb/git-server-docker
 # Hacks due to limitations on use of compose with docker IO resource limits, boo
@@ -12,9 +14,11 @@ docker run --rm -d -p 2222:22 \
 
 # TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
 mkdir -p gitserver/keys || true
-ssh-keygen -t rsa -n "" -P "" -f id_rsa \
-    && cp id_rsa.pub gitserver/keys \
-    && cp id_rsa* jenkins
+if [ ! -f id_rsa ]; then
+  ssh-keygen -t rsa -n "" -P "" -f id_rsa \
+      && cp id_rsa.pub gitserver/keys \
+      && cp id_rsa* jenkins
+fi
 JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
@@ -43,7 +47,6 @@ docker run --rm -d \
 
 # We need the root block device for resource limits, since the device name can change
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1)
-
 
 
 # Run jenkins
