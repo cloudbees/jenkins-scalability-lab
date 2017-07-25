@@ -44,11 +44,13 @@ docker run --rm -d \
 # We need the root block device for resource limits, since the device name can change
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1)
 
+
+
 # Run jenkins
 docker run -it --rm  -h jenkins --name jenkins \
   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
   -p 8080:8080 -p 9011:9011 \
   --link graphite \
   --link gitserver $AGENT_LINKS \
-  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
+#  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:1.0
