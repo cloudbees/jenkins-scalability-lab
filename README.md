@@ -1,7 +1,12 @@
 # jenkins-scalability-lab
-Testbed for measuring scalability of Jenkins
+Testbed for measuring scalability of Jenkins.
 
-Once you run build.sh, there will be:
+# Usage
+* To build everything and bring up the environmeent, run `./build.sh`
+* To shut all of the environment down and kill containers, run './shutdown.sh'
+    - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs
+    - Due to the use of a local volume mount, git server configuration will be retained
+    - All of your graphite data will be lost
 
 **A Jenkins master**
 * Available at [http://localhost:8080/](http://localhost:8080/)
