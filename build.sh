@@ -56,5 +56,6 @@ docker run -it --rm  -h jenkins --name jenkins -l role=jenkins \
   -p 8080:8080 -p 9011:9011 \
   --link graphite \
   --link gitserver $AGENT_LINKS \
-#  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:1.0
+#  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
+  
