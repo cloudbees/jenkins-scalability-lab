@@ -4,7 +4,7 @@ steps-and-logging.groovy
 Steps, with logging.
 */
 
-for (int i=0; i<3; i++) {
+for (int i=0; i<10; i++) {
 	stage ("Stage in Branch $i") {
 		// Some echos.
 		for (int j=0; j < 20; j++) {
