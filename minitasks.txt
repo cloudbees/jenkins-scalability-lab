@@ -7,7 +7,7 @@ X Jenkins server, with plugins.txt and jenkins-home
 X Jenkins server with custom plugins
 X Jenkins server with local jenkins_home
 X Git server
-X External build agent(s)
+X External build agent(s)  - https://github.com/jenkinsci/docker-ssh-slave
 
 # Fixes
 - Fix Jenkins user setup for container (use my special scripts)

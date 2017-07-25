@@ -18,6 +18,9 @@ COPY jenkins.* /usr/share/jenkins/ref/
 ENV JENKINS_JAVA_OPTIONS "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
-
-# RSA key hack
+# RSA key hack, try to set it up so it doesn't use tmp in the near future
 COPY id_rsa* ${JENKINS_HOME}/
+COPY id_rsa* /tmp/
+USER root
+RUN chown ${user}:${user} /tmp/id_rsa* ${JENKINS_HOME}/id_rsa*
+USER ${user}

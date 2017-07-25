@@ -5,15 +5,13 @@ set -o pipefail
 # TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
 mkdir -p gitserver/keys || true
 if [ ! -f id_rsa ]; then
-  ssh-keygen -t rsa -n "" -P "" -f id_rsa
+  ssh-keygen -t rsa -n "" -P "" -C "" -f id_rsa
 fi
 cp id_rsa.pub gitserver/keys && cp id_rsa* jenkins
 JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Build jenkins image
-if [[ "$(docker images -q jenkins-scalability-master:1.0 2> /dev/null)" == "" ]]; then
-  docker build -t jenkins-scalability-master:1.0 ./jenkins
-fi
+docker build -t jenkins-scalability-master:1.0 ./jenkins
 
 # Start git server  https://github.com/jkarlosb/git-server-docker
 # Hacks due to limitations on use of compose with docker IO resource limits, boo
@@ -49,13 +47,13 @@ docker run --rm -d \
 # We need the root block device for resource limits, since the device name can change
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 
-
-# Run jenkins
+# Run jenkins, specifying a named volume makes it persistent even after container dies
 docker run -it --rm  -h jenkins --name jenkins -l role=jenkins \
   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
   -p 8080:8080 -p 9011:9011 \
   --link graphite \
   --link gitserver $AGENT_LINKS \
+  -v jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:1.0
 #  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
   
