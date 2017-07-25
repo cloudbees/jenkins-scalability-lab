@@ -44,7 +44,7 @@ Testbed for measuring scalability of Jenkins.
 
 # Git server setup (needs to be better automated)
 1. We're using the [jkarlos git server docker image](https://hub.docker.com/r/jkarlos/git-server-docker/) which has docs
-2. You'll need to do the SCP stuff to set up remote repos on the git server, AKA to do 'docker exec -it gitserver bash' and then:
+2. You'll need to do the SCP stuff to set up remote repos on the git server, AKA to do 'docker exec -it gitserver sh' and then:
     1. Run 'cd /git-server/repos'
     2. Run 'mkdir myRepoName && cd myRepoName'
     3. Initialize the git repo with 'git init --shared=true'
