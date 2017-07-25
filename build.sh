@@ -20,7 +20,7 @@ fi
 LOCAL_DIR="$(pwd)"
 docker run --rm -d -p 2222:22 \
    -h gitserver \
-   --name gitserver \
+   --name gitserver -l role=gitserver \
    -v "$LOCAL_DIR/gitserver/keys:/git-server/keys" \
    -v "$LOCAL_DIR/gitserver/repos:/git-server/repos" \
    jkarlos/git-server-docker
@@ -31,7 +31,7 @@ AGENT_LINKS=""
 for (( c=1; c<=4; c++ )); do
     AGENT_NAME="agent-${c}"
     docker run -d --rm \
-      -h "$AGENT_NAME" --name "$AGENT_NAME" --link gitserver \
+      -h "$AGENT_NAME" --name "$AGENT_NAME" -l role=agent --link gitserver \
       jenkinsci/ssh-slave "$JENKINS_PUB_KEY"
     AGENT_LIST="$AGENT_LIST $AGENT_NAME"
     AGENT_LINKS="$AGENT_LINKS --link $AGENT_NAME"
@@ -51,7 +51,7 @@ ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -
 
 
 # Run jenkins
-docker run -it --rm  -h jenkins --name jenkins \
+docker run -it --rm  -h jenkins --name jenkins -l role=jenkins \
   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
   -p 8080:8080 -p 9011:9011 \
   --link graphite \
