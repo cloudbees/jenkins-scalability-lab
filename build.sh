@@ -2,6 +2,19 @@
 set -xe
 set -o pipefail
 
+# TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
+mkdir -p gitserver/keys || true
+if [ ! -f id_rsa ]; then
+  ssh-keygen -t rsa -n "" -P "" -f id_rsa
+fi
+cp id_rsa.pub gitserver/keys && cp id_rsa* jenkins
+JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
+
+# Build jenkins image
+if [[ "$(docker images -q jenkins-scalability-master:1.0 2> /dev/null)" == "" ]]; then
+  docker build -t jenkins-scalability-master:1.0 ./jenkins
+fi
+
 # Start git server  https://github.com/jkarlosb/git-server-docker
 # Hacks due to limitations on use of compose with docker IO resource limits, boo
 LOCAL_DIR="$(pwd)"
@@ -11,15 +24,6 @@ docker run --rm -d -p 2222:22 \
    -v "$LOCAL_DIR/gitserver/keys:/git-server/keys" \
    -v "$LOCAL_DIR/gitserver/repos:/git-server/repos" \
    jkarlos/git-server-docker
-
-# TODO generate pubkey with ssh-keygen -t rsa and copy to gitserver and jenkins?
-mkdir -p gitserver/keys || true
-if [ ! -f id_rsa ]; then
-  ssh-keygen -t rsa -n "" -P "" -f id_rsa \
-      && cp id_rsa.pub gitserver/keys \
-      && cp id_rsa* jenkins
-fi
-JENKINS_PUB_KEY=$(cat gitserver/keys/id_rsa.pub)
 
 # Start slave agent executors, names "agent-1, agent-2, etc"
 AGENT_LIST=""
@@ -33,9 +37,6 @@ for (( c=1; c<=4; c++ )); do
     AGENT_LINKS="$AGENT_LINKS --link $AGENT_NAME"
     # TODO create a string of all agent names
 done
-
-# Build jenkins
-docker build -t jenkins-scalability-master:1.0 ./jenkins
 
 # Graphite server
 docker run --rm -d \
