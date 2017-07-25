@@ -22,5 +22,6 @@ ENV JENKINS_JAVA_OPTIONS "-Dcom.sun.management.jmxremote -Dcom.sun.management.jm
 COPY id_rsa* ${JENKINS_HOME}/
 COPY id_rsa* /tmp/
 USER root
+# Confirm this actually chowns, seems to not work
 RUN chown ${user}:${user} /tmp/id_rsa* ${JENKINS_HOME}/id_rsa*
 USER ${user}
