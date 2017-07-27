@@ -26,24 +26,26 @@ int[] merge(int[] first, int[] second) {
 		if (v1 > v2) {
 			output[idx++] = v1; 
 			i++;
-            System.out.println("--> output is now: " + output );	
+            System.out.println("--> in merge list output is now: " + output );
 		} else {
 			output[idx++] = v2;
 			j++;
+            System.out.println("--> in merge list output is now: " + output );
 		}
 	}
 
 	if ( i < first.length) {
 		for (int temp = i; i < first.length; i++) {
 			output[idx++] = first[i];
-            // System.out.println("   --> output is currently " + output);
+            System.out.println("--> in merge list output is now: " + output );
 		}
 	} else if (j < second.length) {
 		for (int temp = j; j < second.length; j++) {
 			output[idx++] = second[j];
+            System.out.println("--> in merge list output is now: " + output );
 		}
 	}
-		throw new IllegalStateException("Never happens?");
+		// throw new IllegalStateException("Never happens?");
 	// }
 
 	return output;
