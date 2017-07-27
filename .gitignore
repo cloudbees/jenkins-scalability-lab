@@ -35,4 +35,4 @@ out
 *.rar
 
 # Temp directory for code snippets
-testcases/snippets/
+# testcases/snippets/
