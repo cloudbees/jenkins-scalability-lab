@@ -1,4 +1,8 @@
+/*
+merge-sort.groovy
 
+Oy.
+*/
 
 int[] firstThing = [1, 2, 3]
 int[] secondThing = [4, 5, 6]
@@ -20,7 +24,6 @@ int[] merge(int[] first, int[] second) {
 
 	// Merge lists
 	while (i < first.length && j < second.length) {
-        System.out.println("--> Are we even getting into this while loop?");
 		int v1 = first[i];
 		int v2 = second[j];
 		if (v1 > v2) {
@@ -33,20 +36,27 @@ int[] merge(int[] first, int[] second) {
             System.out.println("--> in merge list output is now: " + output );
 		}
 	}
+    // i=250;
+    // j=250;
 
 	if ( i < first.length) {
 		for (int temp = i; i < first.length; i++) {
 			output[idx++] = first[i];
-            System.out.println("--> in merge list output is now: " + output );
+            System.out.println("\t--> in merge list output is now: " + output );
 		}
 	} else if (j < second.length) {
 		for (int temp = j; j < second.length; j++) {
 			output[idx++] = second[j];
-            System.out.println("--> in merge list output is now: " + output );
+            System.out.println("\t--> in merge list output is now: " + output );
 		}
 	}
-		// throw new IllegalStateException("Never happens?");
-	// }
-
-	return output;
+    else {
+        throw new IllegalStateException("Array length of i (" + i + ") and/or j (" + j + ") are all jacked up.");
+    }
+    // int[] finallySorted = new int[output.length];
+    // int[] finallySorted = output.sort;
+    // finallySorted[] = (output.sort());
+    // System.out.println("--> FINALLY " + finallySorted);
+	// return finallySorted;
+    return output;
 }
