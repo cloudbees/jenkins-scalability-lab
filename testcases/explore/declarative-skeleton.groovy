@@ -11,11 +11,6 @@ pipeline {
     */
     
     stages {
-        stage ("netstat -a") {
-            steps {
-                sh 'netstat -a'
-            }
-        }
         
         stage ('echo \$PATH') {
             steps {
