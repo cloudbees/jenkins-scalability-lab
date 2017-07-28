@@ -53,10 +53,22 @@ int[] merge(int[] first, int[] second) {
     else {
         throw new IllegalStateException("Array length of i (" + i + ") and/or j (" + j + ") are all jacked up.");
     }
-    // int[] finallySorted = new int[output.length];
-    // int[] finallySorted = output.sort;
-    // finallySorted[] = (output.sort());
-    // System.out.println("--> FINALLY " + finallySorted);
-	// return finallySorted;
+	output.sort();
+	Integer[] finallySorted = new Integer[output.length];
+	finallySorted.sort();
+	System.out.println("--> Final answer is " + finallySorted);
     return output;
 }
+
+/* int[] sortMePlease (int[] vals) {
+	if (vals.length <= 1) {
+		// If we only have one element in the array, then 
+		// there's nothing to do. Return true and bail.
+		return vals;
+	}
+
+	vals.sort();
+	return vals;
+
+}*/
+
