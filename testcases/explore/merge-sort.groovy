@@ -60,15 +60,3 @@ int[] merge(int[] first, int[] second) {
     return output;
 }
 
-/* int[] sortMePlease (int[] vals) {
-	if (vals.length <= 1) {
-		// If we only have one element in the array, then 
-		// there's nothing to do. Return true and bail.
-		return vals;
-	}
-
-	vals.sort();
-	return vals;
-
-}*/
-
