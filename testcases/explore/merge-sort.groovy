@@ -51,12 +51,12 @@ int[] merge(int[] first, int[] second) {
         throw new IllegalStateException("Array length of i (" + i + ") and/or j (" + j + ") are all jacked up.");
     }
 	// System.out.println("3 --> About to call output.sort()");
-	output[].sort();
+	// output[].sort();
 	// System.out.println("4 --> " + output);
 	Integer[] finallySorted = new Integer[output.length];
 	finallySorted = output;
 	finallySorted.sort();
 	// System.out.println("--> Final answer is " + finallySorted);
-    return output;
+    return finallySorted;
 }
 
