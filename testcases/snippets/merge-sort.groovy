@@ -29,32 +29,33 @@ int[] merge(int[] first, int[] second) {
 		if (v1 > v2) {
 			output[idx++] = v1; 
 			i++;
-            System.out.println("--> in merge list output is now: " + output );
+            System.out.println("1 --> in merge list output is now: " + output );
 		} else {
 			output[idx++] = v2;
 			j++;
-            System.out.println("--> in merge list output is now: " + output );
+            System.out.println("1 --> in merge list output is now: " + output );
 		}
 	}
-    // i=250;
-    // j=250;
 
 	if ( i < first.length) {
 		for (int temp = i; i < first.length; i++) {
 			output[idx++] = first[i];
-            System.out.println("\t--> in merge list output is now: " + output );
+            System.out.println("2 --> in merge list output is now: " + output );
 		}
 	} else if (j < second.length) {
 		for (int temp = j; j < second.length; j++) {
 			output[idx++] = second[j];
-            System.out.println("\t--> in merge list output is now: " + output );
+            System.out.println("2 --> in merge list output is now: " + output );
 		}
 	}
     else {
         throw new IllegalStateException("Array length of i (" + i + ") and/or j (" + j + ") are all jacked up.");
     }
-	output.sort();
+	System.out.println("3 --> About to call output.sort()");
+	output[].sort();
+	System.out.println("4 --> " + output);
 	Integer[] finallySorted = new Integer[output.length];
+	finallySorted = output;
 	finallySorted.sort();
 	System.out.println("--> Final answer is " + finallySorted);
     return output;
