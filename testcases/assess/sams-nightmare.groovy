@@ -20,6 +20,10 @@ Here's what we want:
 
 */
 
+// Variable instead of hard coded filename
+// string stashFileName = "ourFilename";
+// string stashName = "ourStashName";
+
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {
         echo "Echo number $i"
@@ -36,9 +40,11 @@ stage ("Write file then stash it") {
         //   - 100M: ~100MB
         //   - 100B: ~1GB
         sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/100Kcharacters'
+        // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/\$ourFilename'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000000 | head -n 1 > stashedStuff/100Mcharacters'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
         stash name: "stashedFile1", includes: "stashedStuff/*"
+        // stash name: $ourStashName, inclues: $ourFilename
     }
 }
 
@@ -70,4 +76,13 @@ for (int i = 0; i < 3; i++) {
             sh 'if [ -f /var/log/jenkins/jenkins.log ]; then echo "LOG FOUND"; cat /var/log/jenkins/jenkins.log | grep -i exception; else echo "NO LOG FOUND"; echo "SECOND MESSAGE"; fi'
         }
     }
+}
+
+// Let's read that file we stashed before, and re-stash it someplace else.
+stage ("Read file, unstash, then restash") {
+    // Read the previously-stashed file
+    readFile 'stashedStuff/100Kcharacters'
+    // And then what?
+    stash name: "stashedFile2", includes: "stashedStuff/*"
+    archiveArtifacts artifacts: 'stashname/whatever', fingerprint: true
 }
