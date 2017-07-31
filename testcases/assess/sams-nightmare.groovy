@@ -20,9 +20,9 @@ Here's what we want:
 
 */
 
-// Variable instead of hard coded filename
-// string stashFileName = "ourFilename";
-// string stashName = "ourStashName";
+// Let's only keep five of these builds around, since we're 
+// generating some pretty big temp files. 
+properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]]);
 
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {
@@ -73,17 +73,12 @@ for (int i = 0; i < 3; i++) {
             sh "env"
             echo "set?"
             sh "set"
-            // echo "What about my log?"
-            // sh 'if [ -f /var/log/jenkins/jenkins.log ]; then echo "LOG FOUND"; cat /var/log/jenkins/jenkins.log | grep -i exception; else echo "NO LOG FOUND"; echo "SECOND MESSAGE"; fi'
         }
     }
 }
 
 // Unstash the stuff from previously onto agent-2.
 stage ("Unstash to agent-2") {
-    // I want to run this on agent-2 if possible. But if agent-2 isn't there,
-    // can I run it someplace else? Like tell pipeline "try for agent-2 but if 
-    // he's not there, just pick anything"
     node('agent-2') {
         // Example says to cd to the filename, which is stashedFile1.
         // I think this needs to be the directory name, which is 'stashedStuff'
@@ -105,3 +100,9 @@ stage ("Unstash to agent-2") {
     }
     echo "I wonder if that worked."
 }
+
+/* stage ("Archive our stashed thing") {
+    node('agent-2') {
+        archiveArtifacts artifacts: '*', fingerprint: true
+    }
+} */
