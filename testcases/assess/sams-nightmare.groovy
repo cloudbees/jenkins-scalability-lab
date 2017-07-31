@@ -44,18 +44,15 @@ stage ("Write file then stash it") {
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000000 | head -n 1 > stashedStuff/100Mcharacters'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
         stash name: "stashedFile1", includes: "stashedStuff/*"
-        dir ("stashedStuff") {
-            sh "ls -alh ${pwd()}/"
-        }
         sh "pwd"
-        sh "ls -alh ${pwd()}/stashedFile1"
+        sh "ls -alh ${pwd()}/"
     }
 }
 
 // Parallel section
 parallelStages = [:]
 
-for (int i = 0; i < 50; i++) {
+for (int i = 0; i < 5; i++) {
 	echo "--> Creating ParallelStages[$i]"
     parallelStages["Branch $i"] = {
         stage ("Parallel stage $i") {
