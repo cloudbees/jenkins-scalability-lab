@@ -30,16 +30,16 @@ stage ("20 echos") {
     }
 }
 
-// Here's a stash step.
+// Here's a stash step to run on agent-1.
 stage ("Write file then stash it") {
-    node {
+    node ("agent-1") {
         // Make the output directory.
         sh "mkdir -p stashedStuff"
         // Let's write a bunch of junk to it.
         //   - 100K: ~100KB
         //   - 100M: ~100MB
         //   - 100B: ~1GB
-        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/100Kcharacters'
+        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100 | head -n 1 > stashedStuff/100Kcharacters'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/\$ourFilename'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000000 | head -n 1 > stashedStuff/100Mcharacters'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
@@ -78,11 +78,23 @@ for (int i = 0; i < 3; i++) {
     }
 }
 
-// Let's read that file we stashed before, and re-stash it someplace else.
-stage ("Read file, unstash, then restash") {
-    // Read the previously-stashed file
-    readFile 'stashedStuff/100Kcharacters'
-    // And then what?
-    stash name: "stashedFile2", includes: "stashedStuff/*"
-    archiveArtifacts artifacts: 'stashname/whatever', fingerprint: true
+// Unstash the stuff from previously onto agent-2.
+stage ("Unstash to agent-2") {
+    // This won't work on a Jenkins that doesn't have 
+    node('agent-2') {
+        // Example says to cd to the filename, which is stashedFile1.
+        // I think this needs to be the directory name, which is 'stashedStuff'
+        // Or maybe a different directory altogether?
+        dir("stashedFile1") {
+            unstash "stashedFile1"
+        }
+
+        // Look, no stashedStuff directory under the root!
+        // pwd() displays the current directory Pipeline is running in.
+        sh "ls -alh ${pwd()}"
+
+        // And look, stashedStuff directory is there under stashedFile1!
+        sh "ls -alh ${pwd()}/stashedFile1"
+    }
+    echo "Look to see if that worked."
 }
