@@ -48,4 +48,16 @@ URL: http://localhost:8080/metrics/RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJ
 
 Need to create metrics key, and then hit API
 
-# Later
+# Graphite
+## Fixing issues
+
+Graphite not showing data -- https://serverfault.com/questions/593157/graphite-shows-none-for-all-data-points-even-though-i-send-it-data
+
+(Issue with data retention/aggregation)
+
+## Image
+https://github.com/hopsoft/docker-graphite-statsd
+
+
+## Graphite customization, need to set aggregation of 1s or more, 90d retention
+in /opt/graphite/conf/storage-schemas.conf

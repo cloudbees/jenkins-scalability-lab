@@ -36,6 +36,7 @@ script-security:1.27
 ssh-credentials:1.13
 ssh-slaves:1.15
 structs:1.6
+swarm:3.4
 support-core:2.39
 workflow-aggregator:2.5
 workflow-api:2.12
