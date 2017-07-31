@@ -67,11 +67,12 @@ for (int i = 0; i < 3; i++) {
             echo "set?"
             sh "set"
             echo "What about my log?"
-            sh 'if [ -f /var/log/jenkins/jenkins.log ] then \
+            /* sh 'if [ -f /var/log/jenkins/jenkins.log ] then \
                 echo "Found our log"; \
                 cat /var/log/jenkins/jenkins.log | grep xception; \
                 else echo "No log to see here."; \
-                fi'
+                fi' */
+            sh 'if [ -f /var/log/jenkins/jenkins.log ]; then echo "LOG FOUND"; echo "SECOND MESSAGE"; else echo "NO LOG FOUND"; echo "SECOND MESSAGE"; fi'
         }
     }
 }
