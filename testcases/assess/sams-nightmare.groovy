@@ -20,14 +20,42 @@ Here's what we want:
 
 */
 
+stage ("20 echos") {
+    for (int i = 0; i < 20; i++) {
+        echo "Echo number $i"
+    }
+}
+
 // Here's a stash step.
 stage ("Write file then stash it") {
     node {
         // Make the output directory.
         sh "mkdir -p stashedStuff"
-        // Let's write a bunch of junk to it. Same shell step as seen in 
-        // lots-of-logging-to-disk.
-        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 5000 | head -n 1 > stashedStuff/5000characters'
-        stash name: "stashedFile1", includes: "stashedStuff/5000characters"
+        // Let's write a bunch of junk to it.
+        //   - 100K: ~100KB
+        //   - 100M: ~100MB
+        //   - 100B: ~1GB
+        // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/100Kcharacters'
+        // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000000 | head -n 1 > stashedStuff/100Mcharacters'
+        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
+        stash name: "stashedFile1", includes: "stashedStuff/1Bcharacters"
     }
 }
+
+// Parallel section
+parallelStages = [:]
+
+for (int i = 0; i < 20; i++) {
+	echo "--> Creating ParallelStages[$i]"
+    parallelStages["Branch $i"] = {
+        stage ("Parallel stage $i") {
+            for (int j=0; j < 10; j++) {
+                echo "\t --> Echo i $i"
+                echo "\t --> Echo j $j"
+            }
+        }
+	}
+}
+parallel parallelStages
+
+
