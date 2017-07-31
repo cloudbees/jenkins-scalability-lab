@@ -35,10 +35,10 @@ stage ("Write file then stash it") {
         //   - 100K: ~100KB
         //   - 100M: ~100MB
         //   - 100B: ~1GB
-        // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/100Kcharacters'
+        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000 | head -n 1 > stashedStuff/100Kcharacters'
         // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 100000000 | head -n 1 > stashedStuff/100Mcharacters'
-        sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
-        stash name: "stashedFile1", includes: "stashedStuff/1Bcharacters"
+        // sh 'cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | fold -w 1000000000 | head -n 1 > stashedStuff/1Bcharacters'
+        stash name: "stashedFile1", includes: "stashedStuff/*"
     }
 }
 
@@ -58,4 +58,20 @@ for (int i = 0; i < 20; i++) {
 }
 parallel parallelStages
 
-
+// Let's put in a hodgepodge of shell steps.
+for (int i = 0; i < 3; i++) {
+    node {
+        stage ("Shell Hodgepodge $i") {
+            echo "env?"
+            sh "env"
+            echo "set?"
+            sh "set"
+            echo "What about my log?"
+            sh 'if [ -f /var/log/jenkins/jenkins.log ] then \
+                echo "Found our log"; \
+                cat /var/log/jenkins/jenkins.log | grep xception; \
+                else echo "No log to see here."; \
+                fi'
+        }
+    }
+}
