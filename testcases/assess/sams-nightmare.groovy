@@ -80,9 +80,6 @@ for (int i = 0; i < 3; i++) {
 // Unstash the stuff from previously onto agent-2.
 stage ("Unstash to agent-2") {
     node('agent-2') {
-        // Example says to cd to the filename, which is stashedFile1.
-        // I think this needs to be the directory name, which is 'stashedStuff'
-        // Or maybe a different directory altogether?
         echo "--> Step is dir(stashedFile1)"
         dir("stashedFile1") {
             echo "--> unstash stashedFile"
@@ -92,6 +89,7 @@ stage ("Unstash to agent-2") {
         // Look, no stashedStuff directory under the root!
         // pwd() displays the current directory Pipeline is running in.
         echo "--> ls on PWD"
+        sh "pwd"
         sh "ls -alh ${pwd()}"
 
         // And look, stashedStuff directory is there under stashedFile1!
@@ -100,6 +98,8 @@ stage ("Unstash to agent-2") {
     }
     echo "I wonder if that worked."
 }
+
+// 
 
 /* stage ("Archive our stashed thing") {
     node('agent-2') {
