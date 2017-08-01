@@ -1,64 +1,53 @@
 # Won't work due to resource limits not working in compose
-version: "3"
+version: "3.3"
 services:
   gitserver:
     image: jkarlos/git-server-docker
     # TODO less hacky volume mounting
     volumes: 
-      - "${CONFIG_DIR}"/git-server/keys:/git-server/keys 
-      - "${CONFIG_DIR}"/git-server/repos:/git-server/repos
+      - "${CONFIG_DIR}/git-server/keys:/git-server/keys"
+      - "${CONFIG_DIR}/git-server/repos:/git-server/repos"
     container_name: gitserver
     labels:
       - role=gitserver
     hostname: gitserver
-
-    # Port for git push by SSD
-    # TBD deploy:placement for docker swarm to run it on separate host
+    # Below is a legal bridge network but will fail with Compose 1.14.0
+#    networks:
+#      - 'scalability_bridge'
     ports: 
       - "2222:22"
-
   agents:
     image: vfarcic/jenkins-swarm-agent
+    container_name: agent
     labels: 
       - role=agent
-    # Need to set COMMAND_OPTIONS
     environment:
-    # Set -master URL to give URL of Jenkins master
-      - COMMAND_OPTIONS="-executors 4 -description swarm-slave -deleteExistingClients "
-    deploy:
-      mode: replicated
-      replicas: 1
-      # TODO placement constraint to the 'agent' node label
-      #placement:
-      #  constraints:
-      #    - node.  
-
-
+      COMMAND_OPTIONS: '-executors 4 -master http://jenkins:8080 -description swarm-slave -deleteExistingClients'
+#    networks:
+#      - scalability-bridge
   graphite:
     image: hopsoft/graphite-statsd
     container_name: graphite
     labels:
       - role=graphite
-    expose:
+#    networks:
+#      - scalability-bridge
+    ports:
       - "81:80"
       - "2003:2003"
       - "8125:8125/udp"
 
-  jenkins:
-    container_name: jenkins
+#  jenkins:
+#    container_name: jenkins
   #  build: ./jenkins
-    hostname: jenkins
-    volumes: 
-      - "${CONFIG_DIR}"/jenkins_home:/var/jenkins_home
+#    hostname: jenkins
+#    volumes: 
+ #     - "${CONFIG_DIR}"/jenkins_home:/var/jenkins_home
     # TBD deploy:placement for docker swarm to run it on separate host
-    depends_on:
-      - gitserver
-    links: 
-      - gitserver
+#    depends_on:
+#      - gitserver
+#    links: 
+#      - gitserver
     # Deploy needs resource limits
-    ports:
-      - "8080:8080"
-
-  agents:
-    container_name: agents
-    hostname: agents
+#    ports:
+#      - "8080:8080"

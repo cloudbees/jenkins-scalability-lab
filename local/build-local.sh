@@ -16,6 +16,9 @@ fi
 
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 
+# Needed to pick up git folder, note that the docker-compose fails due to network
+CONFIG_DIR=$(cd .. && pwd) # docker-compose up
+
 # Start git server, see keys from https://github.com/jkarlosb/git-server-docker
 cp id_rsa.pub gitserver/keys && cp id_rsa* jenkins
 LOCAL_DIR="$(pwd)"
