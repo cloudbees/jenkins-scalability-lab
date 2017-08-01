@@ -13,7 +13,7 @@ services:
     hostname: gitserver
     # Below is a legal bridge network but will fail with Compose 1.14.0
 #    networks:
-#      - 'scalability_bridge'
+#      - 'scalability-bridge'
     ports: 
       - "2222:22"
   agents:
