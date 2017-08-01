@@ -24,13 +24,12 @@ docker build -t jenkins-scalability-master:2.0 ../jenkins
 # CONFIG_DIR=$(cd .. && pwd) docker-compose up
 
 # Start git server, see keys from https://github.com/jkarlosb/git-server-docker
-LOCAL_DIR="$(pwd)"
 docker run --rm -d -p 2222:22 \
    --network scalability-bridge \
    -h gitserver \
    --name gitserver -l role=gitserver \
-   -v "$LOCAL_DIR/gitserver/keys:/git-server/keys" \
-   -v "$LOCAL_DIR/gitserver/repos:/git-server/repos" \
+   -v "$CONFIG_DIR/gitserver/keys:/git-server/keys" \
+   -v "$CONFIG_DIR/gitserver/repos:/git-server/repos" \
    jkarlos/git-server-docker
 
 # Graphite server
