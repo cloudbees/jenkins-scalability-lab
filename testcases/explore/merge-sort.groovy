@@ -10,8 +10,8 @@ TODO: Make this take an argument for the number of
 elements in the two arrays.
 */
 
-int[] firstThing = generateRandomArray(10000);
-int[] secondThing = generateRandomArray(10000);
+int[] firstThing = generateRandomArray(1000);
+int[] secondThing = generateRandomArray(1000);
 
 // Call merge on the two lists.
 merge (firstThing, secondThing);
