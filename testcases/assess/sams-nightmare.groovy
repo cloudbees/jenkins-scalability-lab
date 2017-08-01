@@ -27,6 +27,7 @@ properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', 
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {
         echo "Echo number $i"
+        echo "If this is supposed to be 100 lins we need a lot of echos"
     }
 }
 
@@ -96,13 +97,28 @@ stage ("Unstash to agent-2") {
         echo "--> ls on PWD/stashedFile1"
         sh "ls -alh ${pwd()}/stashedFile1"
     }
-    echo "I wonder if that worked."
 }
 
 // 
-
-/* stage ("Archive our stashed thing") {
-    node('agent-2') {
-        archiveArtifacts artifacts: '*', fingerprint: true
+node ("agent-3") {
+    def mvnHome = tool 'M3'
+    // def mvnHome
+    stage('Check out on agent-3') { 
+    git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+    // mvnHome = tool 'M3'
     }
-} */
+    stage('Build on agent-3') {
+        sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+    }
+    stage('Archive Results on agent-3') {
+        junit '**/target/surefire-reports/TEST-*.xml'
+        archive 'target/*.jar'
+    }
+}
+
+// Read that file that we just stashed into agent-3
+stage ("Read big file from agent-3") {
+    node ("agent-3") {
+        echo "dummy step"
+    }
+}
