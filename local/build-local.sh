@@ -19,6 +19,7 @@ CONFIG_DIR=$(cd .. && pwd)
 cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
 docker build -t jenkins-scalability-master:2.0 ../jenkins
+docker build -t temp-gitserver:1.0 ../gitserver
 
 # When docker-compose networking is fixed to detect the bridge network this will work
 # CONFIG_DIR=$(cd .. && pwd) docker-compose up
@@ -29,8 +30,8 @@ docker run --rm -d -p 2222:22 \
    -h gitserver \
    --name gitserver -l role=gitserver \
    -v "$CONFIG_DIR/gitserver/keys:/git-server/keys" \
-   -v "$CONFIG_DIR/gitserver/repos:/git-server/repos" \
-   jkarlos/git-server-docker
+   temp-gitserver:1.0
+   #jkarlos/git-server-docker
 
 # Graphite server
 docker run --rm -d --network scalability-bridge \
