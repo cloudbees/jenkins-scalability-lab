@@ -2,61 +2,80 @@
 merge-sort.groovy
 
 Merges the two integer arrays and then sorts them.
+
+At the moment this triggers a couple scriptApproval 
+things.
+
+TODO: Make this take an argument for the number of 
+elements in the two arrays.
 */
 
-int[] firstThing = [1, 2, 3, -8, 44, 66, 3, 55, 996, 4, -33]
-int[] secondThing = [4, 5, -2231, 6, 3, 3, 7, 6, 99075, 4, 55, 126455, 555]
+int[] firstThing = generateRandomArray(10000);
+int[] secondThing = generateRandomArray(10000);
 
-// System.out.println(firstThing);
-// System.out.println(secondThing);
-
+// Call merge on the two lists.
 merge (firstThing, secondThing);
 
+// merge method.
 int[] merge(int[] first, int[] second) {
-    // System.out.println("--> first is:  " + first);
-    // System.out.println("--> second is: " + second);
 	int[] output = new int[first.length + second.length];
-    // System.out.println("--> output[] should be uninit'd: " + output + " with length of " + output.length);
 	int idx = 0;
 	int i=0;
 	int j=0;
 
-	// Merge lists
 	while (i < first.length && j < second.length) {
 		int v1 = first[i];
 		int v2 = second[j];
 		if (v1 > v2) {
 			output[idx++] = v1; 
 			i++;
-            // System.out.println("1 --> in merge list output is now: " + output );
 		} else {
 			output[idx++] = v2;
 			j++;
-            // System.out.println("1 --> in merge list output is now: " + output );
 		}
 	}
 
 	if ( i < first.length) {
 		for (int temp = i; i < first.length; i++) {
 			output[idx++] = first[i];
-            // System.out.println("2 --> in merge list output is now: " + output );
 		}
 	} else if (j < second.length) {
 		for (int temp = j; j < second.length; j++) {
 			output[idx++] = second[j];
-            // System.out.println("2 --> in merge list output is now: " + output );
 		}
 	}
     else {
         throw new IllegalStateException("Array length of i (" + i + ") and/or j (" + j + ") are all jacked up.");
     }
-	// System.out.println("3 --> About to call output.sort()");
-	// output[].sort();
-	// System.out.println("4 --> " + output);
 	Integer[] finallySorted = new Integer[output.length];
 	finallySorted = output;
 	finallySorted.sort();
-	// System.out.println("--> Final answer is " + finallySorted);
+
+	// Comment out this stage if you don't want a whole bunch of echos.
+	stage ("Show me the list") {
+	    node ("agent-4") {
+	        echo "Here's your list:"
+			int k = 0;
+			while (k < finallySorted.length) {
+				// Apparently with an integer array, if you want to 
+				// iterate through each element, that must be outside 
+				// the double quotes for the echo. Otherwise we just 
+				// spit out the entire array `k` times.
+				echo " --> " + finallySorted[k];
+				k++;
+			}
+	    }
+	}
     return finallySorted;
 }
 
+// Generate a random array of integers
+int[] generateRandomArray(int arrayLength){
+	int[] jumble = new int[arrayLength];
+	Random random = new Random();
+
+	for (int i = 0; i < arrayLength; i++) {
+		jumble[i] = random.nextInt();
+	}
+	return jumble;
+}
