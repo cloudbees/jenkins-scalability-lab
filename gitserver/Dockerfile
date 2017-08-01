@@ -8,7 +8,7 @@ RUN git config --global user.email "demouser@example.com" \
     && cd /git-server/repo-source \
     && git init && echo '.gitignore' > .gitignore \
     && git add -f .gitignore && git commit -am "Initial commit"
-# Set up the branches and content in repo
+# Convert each subdirectory in testcases to a branch
 RUN cd /git-server/repo-source \
     && for folder in $(ls); do \
         git checkout -b $folder && cd $folder \
