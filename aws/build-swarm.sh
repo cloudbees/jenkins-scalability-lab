@@ -14,6 +14,9 @@ docker pull vfarcic/jenkins-swarm-agent
 # Build the Jenkins dockerfile
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 
+# Start up a swarm
+docker swarm init
+
 
 # Launch compose
 # Launch jenkins manually with resource limits
