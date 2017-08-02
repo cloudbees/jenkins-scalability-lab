@@ -2,11 +2,12 @@
 version: "3.3"
 services:
   gitserver:
-    image: jkarlos/git-server-docker
+    build: 
+      context: ../gitserver
+      image: temp-gitserver:1.0
     # TODO less hacky volume mounting
     volumes: 
       - "${CONFIG_DIR}/git-server/keys:/git-server/keys"
-      - "${CONFIG_DIR}/git-server/repos:/git-server/repos"
     container_name: gitserver
     labels:
       - role=gitserver
