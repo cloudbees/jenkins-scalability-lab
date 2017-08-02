@@ -49,7 +49,8 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 1. Go to "Manage Jenkins" -> "Configure Jenkins", and under "Random Job Builder" set rate > 0
 
 # Troubleshooting
-
+* **Problem:** Basic issues i.e. something broke
+    - **Solution:** run the shutdown script, run `docker rm volume jenkins_home`, and run the build-local.sh script again
 * **Problem** Halp, I get an error along the lines of:
     * > Error response from daemon: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network
     * **Solution:** If you're running a VPN, deactivate it, shut down the load test fully, and start over again
