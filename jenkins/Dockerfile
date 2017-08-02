@@ -22,5 +22,6 @@ ENV JENKINS_JAVA_OPTIONS "-Dcom.sun.management.jmxremote -Dcom.sun.management.jm
 USER root
 COPY id_rsa* /usr/share/jenkins/ref/
 # Confirm this actually chowns, seems to not work
-RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa*
+RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa* \
+    && chmod 600 usr/share/jenkins/ref/id_rsa*
 USER jenkins

@@ -1,3 +1,4 @@
+import hudson.ExtensionList;
 import jenkins.model.*
 import jenkins.install.InstallState
 import hudson.security.SecurityRealm
@@ -17,5 +18,11 @@ JenkinsLocationConfiguration.get().setUrl("http://jenkins:8080/")
 // Create an SSH credential to communicate with the gitserver ssh://git@gitserver/git-server/repos/testcases.git
 SystemCredentialsProvider.ProviderImpl system = ExtensionList.lookup(CredentialsProvider.class).get(SystemCredentialsProvider.ProviderImpl.class);
 CredentialsStore systemStore = system.getStore(Jenkins.instance);
-BasicSSHUserPrivateKey sshCred = new BasicSSHUserPrivateKey(CredentialsScope.GLOBAL, "git-ssh", "git", new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource('$JENKINS_HOME/id_rsa'), "", "SSH key to communicate with temporary gitserver");
+BasicSSHUserPrivateKey sshCred = new BasicSSHUserPrivateKey(CredentialsScope.GLOBAL, "git-ssh", "git", new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource('/var/jenkins_home/id_rsa'), "", "SSH key to communicate with temporary gitserver");
 systemStore.addCredentials(Domain.global(), sshCred);
+
+/**
+Multibranch job, name "testcases"
+Branch source from local git repo ssh://git@gitserver/git-server/repos/testcases.git
+Build by jenkinsfile
+*/
