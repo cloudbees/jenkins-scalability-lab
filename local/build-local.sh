@@ -11,7 +11,7 @@ fi
 
 # Create network if absent
 if [ $(docker network ls | grep scalability-bridge | wc -l) -eq 0 ]; then
-    docker network create --attachable -d bridge scalability-bridge || true
+    docker network create --attachable -d bridge scalability-bridge
 fi
 
 # Needed to pick up git configs and some other things
