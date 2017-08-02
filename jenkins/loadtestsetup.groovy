@@ -19,7 +19,7 @@ import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 Jenkins.instance.setNumExecutors(0);
 Jenkins.instance.setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
 
-// Solves issues with host URL for Swarm agent plugin
+// Solves issues with host URL for Swarm agent plugin, but generates harmless "broken reverse proxy" warnings
 JenkinsLocationConfiguration.get().setUrl("http://jenkins:8080/")
 
 // Create an SSH credential to communicate with the gitserver ssh://git@gitserver/git-server/repos/testcases.git
