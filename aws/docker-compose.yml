@@ -8,12 +8,41 @@ services:
       - "${CONFIG_DIR}"/git-server/keys:/git-server/keys 
       - "${CONFIG_DIR}"/git-server/repos:/git-server/repos
     container_name: gitserver
+    labels:
+      - role=gitserver
     hostname: gitserver
 
     # Port for git push by SSD
     # TBD deploy:placement for docker swarm to run it on separate host
     ports: 
       - "2222:22"
+
+  agents:
+    image: vfarcic/jenkins-swarm-agent
+    labels: 
+      - role=agent
+    # Need to set COMMAND_OPTIONS
+    environment:
+    # Set -master URL to give URL of Jenkins master
+      - COMMAND_OPTIONS="-executors 4 -description swarm-slave -deleteExistingClients "
+    deploy:
+      mode: replicated
+      replicas: 1
+      # TODO placement constraint to the 'agent' node label
+      #placement:
+      #  constraints:
+      #    - node.  
+
+
+  graphite:
+    image: hopsoft/graphite-statsd
+    container_name: graphite
+    labels:
+      - role=graphite
+    expose:
+      - "81:80"
+      - "2003:2003"
+      - "8125:8125/udp"
 
   jenkins:
     container_name: jenkins

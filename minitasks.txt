@@ -10,17 +10,17 @@ X Git server
 X External build agent(s)  - https://github.com/jenkinsci/docker-ssh-slave
 
 # Fixes
-- Fix Jenkins user setup for container (use my special scripts)
+X Fix Jenkins user setup for container (use my special scripts)
     + Alternately, every time do a chown -R jenkins:jenkins $JENKINS_HOME
-- FIX the git checkout from repo: https://github.com/jkarlosb/git-server-docker
+X FIX the git checkout from repo: https://github.com/jkarlosb/git-server-docker
     + git credentialsId: 'jenkins-new',url:'ssh://git@gitserver:22/git-server/repos/sample.git'  (probably invalid repo structure)
-- Agents need to be auto-created by the swarm plugin
-- Agents need to have their SSH keys and hostnames prepopulated on Jenkins
-- Fix the JENKINS_HOME getting wrong user permissions (sigh, again, probably cause of update ctr issues)
+X Agents need to be auto-created by the swarm plugin
+X Agents need to have their SSH keys and hostnames prepopulated on Jenkins
+X Fix the JENKINS_HOME getting wrong user permissions (sigh, again, probably cause of update ctr issues)
 
 # Polish
-- Automate agent setup with Docker swarm
-- Docker compose what I can using docker swarm?
+X Automate agent setup with Docker swarm
+NOPE Docker compose what I can using docker swarm?
 
 # Basics
 X random-job-builder -- seems to take a while to kick in
@@ -31,13 +31,13 @@ X metrics reporting -- working on Graphite integration: http://graphite.readthed
 X Clean up metrics reporting to give fixed or total numbers, not histograms
 
 # Features
-- Linux metrics plugin for IO and network:
+X Linux metrics plugin for IO and network:
     + Add vmstats - wio, nice, system, cpu steal, etc
     + Add iostat reporting
     + Use https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats for raw figures on IO
     + Network stats: https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-net-statistics
     + Also: /sys/block/vda/stat and /sys/block/vda/vda1/stat
-- Random job builder: filter for jobs
+X Random job builder: filter for jobs
 - Random job builder: keep queue full
 - Select metrics of interest to report on?
 
@@ -48,4 +48,16 @@ URL: http://localhost:8080/metrics/RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJ
 
 Need to create metrics key, and then hit API
 
-# Later
+# Graphite
+## Fixing issues
+
+Graphite not showing data -- https://serverfault.com/questions/593157/graphite-shows-none-for-all-data-points-even-though-i-send-it-data
+
+(Issue with data retention/aggregation)
+
+## Image
+https://github.com/hopsoft/docker-graphite-statsd
+
+
+## Graphite customization, need to set aggregation of 1s or more, 90d retention
+in /opt/graphite/conf/storage-schemas.conf
