@@ -2,7 +2,7 @@
 Testbed for measuring scalability of Jenkins.
 
 # Usage
-* To build everything and bring up the environmeent, run `./build.sh`
+* To build everything and bring up the environmeent, run `cd local && ./build-local.sh`
 * To shut all of the environment down and kill containers, run './shutdown.sh'
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs
     - Due to the use of a local volume mount, git server configuration will be retained
