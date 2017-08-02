@@ -10,7 +10,7 @@ if [ ! -f id_rsa ]; then
 fi
 
 # Create network if absent
-if [ $(docker network ls | grep scalability-bridge | wc -l) -eq 0]; then
+if [ $(docker network ls | grep scalability-bridge | wc -l) -eq 0 ]; then
     docker network create --attachable -d bridge scalability-bridge || true
 fi
 
@@ -49,7 +49,6 @@ docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalabili
   -p 8080:8080 -p 9011:9011 \
   -v jenkins_home:/var/jenkins_home \
   jenkins-scalability-master:2.0
-#  -v $(pwd)/jenkins/jenkins_home:/var/jenkins_home \
 
 # Autoconnects & creates agents
 docker run --rm -d --network scalability-bridge \
