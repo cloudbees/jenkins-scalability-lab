@@ -14,8 +14,15 @@ Testbed for measuring scalability of Jenkins.
 **A Graphite server**
 * Available at [http://localhost:81/](http://localhost:81/) with visualization
 
-**A Git Server using the local filesystem**
-* Available at 
+**A Git Server**
+* You can clone locally via:
+```
+ssh-agent $(ssh-add ./id_rsa; git clone ssh://git@localhost:2222/git-server/repos/testcases.git)
+```
+* You can push (with local repo) via:
+```
+ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
+```
 
 **Build agents**
 * Launched, but may need manual configuration on the master
