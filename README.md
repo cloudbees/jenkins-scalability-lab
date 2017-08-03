@@ -14,6 +14,8 @@ Testbed for measuring scalability of Jenkins.
 * Includes credential 'git-ssh' with the SSH key can be used to clone or interact with the Git server, with remote ssh://git@gitserver/git-server/repos/testcases.git
 * Includes a multibranch project 'testserver' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
 * Configured to have 0 executors -- all executors will be provided by the Swarm Agent Docker containers
+* jenkins/plugins.txt will define plugins included on the master
+* jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
 **A Git Server**
 * The git server is automatically populated with testcases from gitserver/testcases
