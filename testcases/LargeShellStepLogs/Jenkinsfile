@@ -1,7 +1,5 @@
 /*
-lots-of-logging-to-disk.groovy
-
-Does lots of logging to disk.
+Does lots of logging to disk via a durable task step (meaning very large logfiles for single steps)
 
 Hammers durable-task, logging via remoting, 
 
