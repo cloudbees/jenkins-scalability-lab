@@ -10,6 +10,8 @@ TODO: Make this take an argument for the number of
 elements in the two arrays.
 */
 
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+
 int[] firstThing = generateRandomArray(1000);
 int[] secondThing = generateRandomArray(1000);
 

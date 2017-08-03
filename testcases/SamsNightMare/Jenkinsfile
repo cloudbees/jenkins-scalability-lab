@@ -26,7 +26,8 @@ int fileSize = Integer.valueOf(params.setRandomFileSize);
 
 // Let's only keep ten of these builds around, since we're 
 // generating some pretty big temp files. 
-properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]]);
+
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', artifactNumToKeepStr: '100']]
 
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {

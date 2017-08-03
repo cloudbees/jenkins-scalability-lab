@@ -6,6 +6,8 @@ Does lots of logging to disk.
 Hammers durable-task, logging via remoting, 
 
 */ 
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+
 for (int i = 0; i < 5; i++) {
 
     stage ("Stage $i") {
