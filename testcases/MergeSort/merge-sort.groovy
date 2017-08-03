@@ -12,6 +12,9 @@ elements in the two arrays.
 
 properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
+
+// Use load step and load sort-lib for functions, then run srot with preset sizes here
+
 int[] firstThing = generateRandomArray(1000);
 int[] secondThing = generateRandomArray(1000);
 

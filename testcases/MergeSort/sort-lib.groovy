@@ -71,6 +71,56 @@ static int[] merge(int[] first, int[] second) {
     }
 }
 
+/** Merge two already sorted arrays, to create one output array that is overall sorted
+*   CPS form of the above
+*/
+static int[] mergeCPS(int[] first, int[] second) {
+    int[] output = new int[first.length + second.length];
+    int idx = 0;
+    int i=0;
+    int j=0;
+
+    // Walk through until we hit end of one array, appending the larger of the two values from current
+    // position in each array
+    while (i < first.length && j < second.length) {
+        int v1 = first[i];
+        int v2 = second[j];
+        if (v1 > v2) {
+            output[idx++] = v1; 
+            i++;
+        } else {
+            output[idx++] = v2;
+            j++;
+        }
+    }
+
+    // Copy out any residuals from the longer array after we've reached end of its mate
+    if ( i < first.length) {
+        for (int temp = i; i < first.length; i++) {
+            output[idx++] = first[i];
+        }
+    } else if (j < second.length) {
+        for (int temp = j; j < second.length; j++) {
+            output[idx++] = second[j];
+        }
+    }
+}
+
+static boolean isSortedCPS(int[] array) {
+    if (array == null || array.length <= 1) {
+        return true;
+    }
+    int last = array[0];
+    for (int i=1; i<array.length; i++) {
+        int val = array[i];
+        if (val < last) {
+            return false;
+        }
+        last = val;
+    } 
+    return true;
+}
+
 @NonCPS
 static boolean isSorted(int[] array) {
     if (array == null || array.length <= 1) {
@@ -117,5 +167,36 @@ static int[] mergeSort(int[] array) {
 
     // Merge 'em for a sorted result'
     return merge(mergeSort(firstHalf), mergeSort(secondHalf));
+}
+
+/** Merge sort in pure CPS */
+static int[] mergeSortCPS(int[] array) {
+
+    if (isSortedCPS(array)) {
+        return array;
+    }
+
+    if (array.length == 2) {
+        // Guaranteed not to be sorted because we checked already above, so just swap
+        int first = array[0];
+        array[0] = array[1];
+        array[1] = first;
+    }
+
+    // Split the array in half
+    int midpoint = array.length/2;
+    int[] firstHalf = new int[midpoint];
+    int[] secondHalf = new int[array.length - midpoint];
+    int idx =0;
+    for (int i = 0; i < midpoint; i++) {
+        firstHalf[idx++] = array[i];
+    }
+    idx=0;
+    for (int i = midpoint; i < array.length; i++) {
+        secondHalf[idx++] = array[i];
+    }
+
+    // Merge 'em for a sorted result'
+    return mergeCPS(mergeSortCPS(firstHalf), mergeSortCPS(secondHalf));
 }
 
