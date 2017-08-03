@@ -42,12 +42,8 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * Note that this requires some custom networking. Swarm agent Docker containers can't simply connect via the HTTP port and JNLP port to the master, they appear to need to be on the same Docker network as the master or at least have a container link created
 
 # Manual configuration (currently being automated)
-* Configuring the Metrics Graphite reporter plugin:
-    1. To configure, go to "Mange Jenkins" then "Configure system" and in the section "Graphite metrics reporting" add server hostname "graphite" and port 2003 (default)
-    2. Leave prefix blank, and save
-    3. Stats will show in grapite, under the tree on the left, under "localhost" (http, jenkins, system, vm, etc) for the Jenkins master
 
-# To trigger load
+## To trigger load
 1. Go to "Manage Jenkins" -> "Configure Jenkins", and under "Random Job Builder" set rate > 0
 
 # Troubleshooting
