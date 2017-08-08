@@ -2,7 +2,7 @@
 A Jenkinsfile for our merge sort Groovy stuff.
 */
 
-@Library(sort-lib)
+library(sort-lib)
 
 // Set the number of kept builds
 // properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
