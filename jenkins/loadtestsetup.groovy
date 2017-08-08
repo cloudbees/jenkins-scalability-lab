@@ -15,6 +15,7 @@ import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSCMSource;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 
+import jenkins.metrics.impl.graphite.GraphiteServer;
 
 Jenkins.instance.setNumExecutors(0);
 Jenkins.instance.setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
@@ -27,6 +28,10 @@ SystemCredentialsProvider.ProviderImpl system = ExtensionList.lookup(Credentials
 CredentialsStore systemStore = system.getStore(Jenkins.instance);
 BasicSSHUserPrivateKey sshCred = new BasicSSHUserPrivateKey(CredentialsScope.GLOBAL, "git-ssh", "git", new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource('/var/jenkins_home/id_rsa'), "", "SSH key to communicate with temporary gitserver");
 systemStore.addCredentials(Domain.global(), sshCred);
+
+// Autoconfigure the graphite metrics reporter to speak to the graphite container
+ArrayList<GraphiteServer> graphite = (List<GraphiteServer>)(Arrays.asList(new GraphiteServer("graphite", 2003, null)))
+Jenkins.instance.getExtensionList(GraphiteServer.DescriptorImpl.class).get(0).setServers(graphite);
 
 
 // Create a multibranch project for testcases

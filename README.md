@@ -7,6 +7,7 @@ Testbed for measuring scalability of Jenkins.
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs, but you can clear configuration with `docker volume rm jenkins_home`
     - Your gitserver repo data will be lost (that's fine, it's copied from a local folder)
     - All of your graphite data will be lost
+* There are some helpful scripts to run via script console on the master in the 'user-scripts' folder :)
 
 **A Jenkins master**
 * Available at [http://localhost:8080/](http://localhost:8080/)
@@ -14,6 +15,8 @@ Testbed for measuring scalability of Jenkins.
 * Includes credential 'git-ssh' with the SSH key can be used to clone or interact with the Git server, with remote ssh://git@gitserver/git-server/repos/testcases.git
 * Includes a multibranch project 'testserver' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
 * Configured to have 0 executors -- all executors will be provided by the Swarm Agent Docker containers
+* jenkins/plugins.txt will define plugins included on the master
+* jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
 **A Git Server**
 * The git server is automatically populated with testcases from gitserver/testcases
@@ -40,12 +43,8 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * Note that this requires some custom networking. Swarm agent Docker containers can't simply connect via the HTTP port and JNLP port to the master, they appear to need to be on the same Docker network as the master or at least have a container link created
 
 # Manual configuration (currently being automated)
-* Configuring the Metrics Graphite reporter plugin:
-    1. To configure, go to "Mange Jenkins" then "Configure system" and in the section "Graphite metrics reporting" add server hostname "graphite" and port 2003 (default)
-    2. Leave prefix blank, and save
-    3. Stats will show in grapite, under the tree on the left, under "localhost" (http, jenkins, system, vm, etc) for the Jenkins master
 
-# To trigger load
+## To trigger load
 1. Go to "Manage Jenkins" -> "Configure Jenkins", and under "Random Job Builder" set rate > 0
 
 # Troubleshooting
