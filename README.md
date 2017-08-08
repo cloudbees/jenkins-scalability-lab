@@ -7,6 +7,7 @@ Testbed for measuring scalability of Jenkins.
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs, but you can clear configuration with `docker volume rm jenkins_home`
     - Your gitserver repo data will be lost (that's fine, it's copied from a local folder)
     - All of your graphite data will be lost
+* There are some helpful scripts to run via script console on the master in the 'user-scripts' folder :)
 
 **A Jenkins master**
 * Available at [http://localhost:8080/](http://localhost:8080/)
