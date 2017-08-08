@@ -1,0 +1,4 @@
+// Simple echo, exercises step logic
+for (int i=0; i<100; i++) {
+    echo "Ran step $i"
+}

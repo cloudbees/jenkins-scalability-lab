@@ -19,8 +19,9 @@ ENV JENKINS_JAVA_OPTIONS "-Dcom.sun.management.jmxremote -Dcom.sun.management.jm
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
 # RSA key hack, try to set it up so it doesn't use tmp in the near future
-COPY id_rsa* ${JENKINS_HOME}/
-COPY id_rsa* /tmp/
 USER root
-RUN chown ${user}:${user} /tmp/id_rsa* ${JENKINS_HOME}/id_rsa*
-USER ${user}
+COPY id_rsa* /usr/share/jenkins/ref/
+# Confirm this actually chowns, seems to not work
+RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa* \
+    && chmod 600 usr/share/jenkins/ref/id_rsa*
+USER jenkins
