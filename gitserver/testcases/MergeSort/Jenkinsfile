@@ -1,0 +1,15 @@
+/*
+A Jenkinsfile for our merge sort Groovy stuff.
+*/
+
+@Library(sort-lib)
+
+// Set the number of kept builds
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+
+// Create our arrays
+int[] firstThing = generateRandomArray(1000);
+int[] secondThing = generateRandomArray(1000);
+
+// Run merge() on the arrays we just created
+int[] sortedThing = merge(firstThing, secondThing);

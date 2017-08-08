@@ -1,0 +1,15 @@
+/*
+Simple echo steps
+*/
+
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+
+for (int i=0; i<10; i++) {
+	stage ("Stage $i") {
+		// Some echos.
+		for (int j=0; j < 20; j++) {
+			// Put in some logging.
+            echo "Here goes echo number $j"
+		}
+	}
+}
