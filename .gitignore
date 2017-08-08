@@ -33,3 +33,6 @@ out
 *.war
 *.ear
 *.rar
+
+# Temp directory for code snippets
+# testcases/snippets/
