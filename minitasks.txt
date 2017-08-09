@@ -17,10 +17,13 @@ X FIX the git checkout from repo: https://github.com/jkarlosb/git-server-docker
 X Agents need to be auto-created by the swarm plugin
 X Agents need to have their SSH keys and hostnames prepopulated on Jenkins
 X Fix the JENKINS_HOME getting wrong user permissions (sigh, again, probably cause of update ctr issues)
+- Generate GC log for Jenkins in docker, written to /tmp, for some reason the normal suggested settings will not accomplish this, when added to `ENV JENKINS_JAVA_OPTIONS` (may need other variable)
+- Why does linux disk stats report a bunch of 'nb*' devices, and why don't the aggregate metrics look correct in docker -- write Junit testcase with Assume to restrict to running in linux environment
 
 # Polish
 X Automate agent setup with Docker swarm
 NOPE Docker compose what I can using docker swarm?
+- Look at reducing the graphite metrics update interval and submitting filtered metrics to get better #s
 
 # Basics
 X random-job-builder -- seems to take a while to kick in
