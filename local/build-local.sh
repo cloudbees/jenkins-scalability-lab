@@ -20,6 +20,7 @@ cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
+docker build -t temp-graphite:1.0 ../graphite
 
 # When docker-compose networking is fixed to detect the bridge network this will work
 # CONFIG_DIR=$(cd .. && pwd) docker-compose up
@@ -39,7 +40,7 @@ docker run --rm -d --network scalability-bridge \
   -p 81:80 \
   -p 2003:2003 \
   -p 8125:8125/udp \
-  hopsoft/graphite-statsd
+  temp-graphite:1.0
 
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 
