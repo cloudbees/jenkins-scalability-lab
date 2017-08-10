@@ -6,7 +6,7 @@ Hammers durable-task, logging via remoting,
 */ 
 // properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
-int randomFileSize = 100000;
+int randomFileSize = 1000;
 for (int i = 0; i < 5; i++) {
 
     stage ("Stage Number $i") {
