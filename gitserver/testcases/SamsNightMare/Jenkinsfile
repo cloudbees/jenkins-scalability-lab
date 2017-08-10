@@ -20,13 +20,12 @@ Here's what we want:
 
 */
 
-// Take the file size as a parameter. 
+// Set the size of the random file here.
 int randomFileSize = 1000000;
-int fileSize = Integer.valueOf(params.setRandomFileSize);
 
-// Let's only keep ten of these builds around, since we're 
-// generating some pretty big temp files. 
-
+// This is something we thought might be clever, but it turns out, maybe not.
+// Seems that with our deliberately-chosen levels of Pipeline plugins, which are 
+// on the old side, this doesn't work right.
 // properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', artifactNumToKeepStr: '100']]
 
 stage ("20 echos") {
@@ -36,13 +35,12 @@ stage ("20 echos") {
     }
 }
 
-// Here's a stash step to run on agent-1.
+// Stash step to generate, and stash, a file full of nonsense.
 stage ("Write file then stash it") {
-    node ("agent-1") {
+    node {
         // Make the output directory.
-        echo "--> Should be the parameter 222222 as set in Jenkins: $fileSize"
         sh "mkdir -p stashedStuff"
-        sh "cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | head -c $fileSize  > stashedStuff/gibberish"
+        sh "cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | head -c $randomFileSize  > stashedStuff/gibberish"
         stash name: "stashedFile1", includes: "stashedStuff/*"
         sh "pwd"
         sh "ls -alh ${pwd()}/"
@@ -77,9 +75,9 @@ for (int i = 0; i < 3; i++) {
     }
 }
 
-// Unstash the stuff from previously onto agent-2.
-stage ("Unstash to agent-2") {
-    node('agent-2') {
+// Unstash the stuff from before
+stage ("Unstash the thing we just created") {
+    node {
         echo "--> Step is dir(stashedFile1)"
         dir("stashedFile1") {
             echo "--> unstash stashedFile"
@@ -98,7 +96,7 @@ stage ("Unstash to agent-2") {
 }
 
 // Simple maven build that we've probably all seen before
-node ("agent-3") {
+node {
     def mvnHome = tool 'M3'
     stage('Check out on agent-3') { 
     git 'https://github.com/jglick/simple-maven-project-with-tests.git'
@@ -113,9 +111,9 @@ node ("agent-3") {
 }
 
 // Read that file that we just stashed into agent-3
-stage ("Read big file from agent-3") {
-    node ("agent-3") {
-        echo "dummy step"
+// stage ("Read big file from agent-3") {
+//     node {
+//         echo "dummy step"
         
-    }
-}
+//     }
+// }
