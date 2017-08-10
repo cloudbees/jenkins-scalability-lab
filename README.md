@@ -38,7 +38,7 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 **A Graphite server**
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
-    - Configure it to speak to Graphite with its data source (might be on port 7002, might be 80, might be 82, could be localhost or 127.0.0.1)
+    - Configure it to speak to Graphite for its data source @ http://graphite:80 
 * Graphite UI available at [http://localhost:82/](http://localhost:82/) with visualization
 * Docs for the container base we're using are [on Github](https://github.com/m30m/docker-graphite-grafana)
 
