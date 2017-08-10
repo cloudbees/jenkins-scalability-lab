@@ -44,7 +44,7 @@ docker run --rm -d -p 2222:22 \
 docker run -d --rm -h influx --name influx --network scalability-bridge \
  -p 8083:8083 -p 8086:8086 -p 2015:2015 \
  -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=my_db \
- -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="tag1.tag2.tag3.measurement*" tutum/influxdb
+ -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="host.tag1.tag2.measurement*" tutum/influxdb
 
 # Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
 # Ports 81 - grafana, 
