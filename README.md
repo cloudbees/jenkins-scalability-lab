@@ -36,7 +36,11 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
     - Note that repos you upload to the server must be in bare repo format not just a normal repo -- usually this is done by cloning a normal repo using `git clone --bare` to, uh, bare-ify it
 
 **A Graphite server**
-* Available at [http://localhost:81/](http://localhost:81/) with visualization
+* Grafana available at [http://localhost:81/](http://localhost:81/)
+    - Login is admin, password admin
+    - Configure it to speak to Graphite with its data source (might be on port 7002, might be 80, might be 82, could be localhost or 127.0.0.1)
+* Graphite UI available at [http://localhost:82/](http://localhost:82/) with visualization
+* Docs for the container base we're using are [on Github](https://github.com/m30m/docker-graphite-grafana)
 
 **Build agents**
 * Connect automatically via the Swarm Agents plugin
