@@ -20,13 +20,12 @@ Here's what we want:
 
 */
 
-// Take the file size as a parameter. 
+// Set the size of the random file here.
 int randomFileSize = 1000000;
-int fileSize = Integer.valueOf(params.setRandomFileSize);
 
-// Let's only keep ten of these builds around, since we're 
-// generating some pretty big temp files. 
-
+// This is something we thought might be clever, but it turns out, maybe not.
+// Seems that with our deliberately-chosen levels of Pipeline plugins, which are 
+// on the old side, this doesn't work right.
 // properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', artifactNumToKeepStr: '100']]
 
 stage ("20 echos") {
