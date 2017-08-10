@@ -35,11 +35,14 @@ docker run --rm -d -p 2222:22 \
    #jkarlos/git-server-docker
 
 # Graphite server
+# External ports: 81 - grafana, 82 - graphite web interface with admin login admin:admin
+# 7002 is carbon-cache query port used by grafana
 docker run --rm -d --network scalability-bridge \
   -h graphite --name graphite \
-  -p 81:80 \
+  -p 81:3000 \
   -p 2003:2003 \
-  -p 8125:8125/udp \
+  -p 82:80 \
+  -p 7002:7002 \
   temp-graphite:1.0
 
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:1.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
