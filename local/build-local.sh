@@ -20,7 +20,6 @@ cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
-docker build -t temp-graphite:1.0 ../graphite
 
 # When docker-compose networking is fixed to detect the bridge network this will work
 # CONFIG_DIR=$(cd .. && pwd) docker-compose up
@@ -37,19 +36,22 @@ docker run --rm -d -p 2222:22 \
 # Graphite server
 # External ports: 82 - graphite web interface with admin login admin:admin
 # 7002 is carbon-cache query port used by grafana
-docker run --rm -d --network scalability-bridge \
-  -h graphite --name graphite \
-  -p 2003:2003 \
-  -p 82:80 \
-  -p 7002:7002 \
-  temp-graphite:1.0
+
+# InfluxDB to ingest data, see port 8083 for web interface, accepts graphite input on port 2015
+# Port 8086 is where Grafana binds to it
+# Note: DB is my_db for stats, username and password below
+# May need to play with the template because it truncates hostname
+docker run -it --rm -h influx --name influx --network scalability-bridge \
+ -p 8083:8083 -p 8086:8086 -p 2015:2015 \
+ -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=my_db \
+ -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="tag1.tag2.tag3.measurement*" tutum/influxdb
 
 # Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
 # Ports 81 - grafana, 
 docker run --rm -d --network scalability-bridge \
   -h grafana --name grafana \
   -p 81:3000 \
-  grafana/grafana:4.4.3
+  grafana/grafana:4.3.2
 
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:2.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 

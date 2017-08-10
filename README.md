@@ -35,12 +35,12 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * For further info on how to interact with the server and create new repos on it, please see: [the jkarlos/git-server-docker](https://hub.docker.com/r/jkarlos/git-server-docker/)
     - Note that repos you upload to the server must be in bare repo format not just a normal repo -- usually this is done by cloning a normal repo using `git clone --bare` to, uh, bare-ify it
 
-**A Graphite server**
+**A Grafana & Influx servers for metrics**
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
-    - Configure it to speak to Graphite for its data source @ http://graphite:80 
-* Graphite UI available at [http://localhost:82/](http://localhost:82/) with visualization
-* Docs for the container base we're using are [on Github](https://github.com/m30m/docker-graphite-grafana)
+    - Configure it to speak to InfluxDB for its data source @ http://influx:8086 
+* InfluxDB UI available at [http://localhost:8083/](http://localhost:8083/) for exploring queries
+* Docs for the Influx ingest of Graphite data [here](https://github.com/influxdata/influxdb/blob/master/services/graphite/README.md)
 
 **Build agents**
 * Connect automatically via the Swarm Agents plugin

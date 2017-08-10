@@ -29,9 +29,9 @@ CredentialsStore systemStore = system.getStore(Jenkins.instance);
 BasicSSHUserPrivateKey sshCred = new BasicSSHUserPrivateKey(CredentialsScope.GLOBAL, "git-ssh", "git", new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource('/var/jenkins_home/id_rsa'), "", "SSH key to communicate with temporary gitserver");
 systemStore.addCredentials(Domain.global(), sshCred);
 
-// Autoconfigure the graphite metrics reporter to speak to the graphite container
-ArrayList<GraphiteServer> graphite = (List<GraphiteServer>)(Arrays.asList(new GraphiteServer("graphite", 2003, null)))
-Jenkins.instance.getExtensionList(GraphiteServer.DescriptorImpl.class).get(0).setServers(graphite);
+// Autoconfigure the graphite metrics reporter to speak to the InfluxDB container
+ArrayList<GraphiteServer> influx = (List<GraphiteServer>)(Arrays.asList(new GraphiteServer("influx", 2015, null)))
+Jenkins.instance.getExtensionList(GraphiteServer.DescriptorImpl.class).get(0).setServers(influx);
 
 
 // Create a multibranch project for testcases
