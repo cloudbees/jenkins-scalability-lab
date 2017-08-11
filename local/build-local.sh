@@ -7,6 +7,7 @@ set -o pipefail
 # Create SSH key if absent, set up for secret
 if [ ! -f id_rsa ]; then
   ssh-keygen -t rsa -n "" -P "" -C "" -f id_rsa
+  chmod 600 id_rsa*
 fi
 
 # Create network if absent
