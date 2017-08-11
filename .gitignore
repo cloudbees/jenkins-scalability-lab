@@ -9,8 +9,8 @@ node_modules
 
 # Misc crap from the OS
 .DS_Store
-id_rsa
-id_rsa.pub
+*_rsa
+*.pub
 
 # Log & etc from java
 *.log
