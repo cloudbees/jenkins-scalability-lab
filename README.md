@@ -35,6 +35,7 @@ ssh-agent $(ssh-add ./id_rsa; git clone ssh://git@localhost:2222/git-server/repo
 ```
 ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 ```
+* Alternately, **to push/clone the git repository using normal SSH credentials**, if you copy your public SSH key (usually `~/.ssh/id_rsa.pub`) to a new file **THAT IS NOT id_rsa.pub** in gitserver/keys, you can pull/push from [ ssh://git@localhost:2222/git-server/repos/testcases.git]( ssh://git@localhost:2222/git-server/repos/testcases.git) with your normal SSH credentials.  Note that testcases must be new branches and include a Jenkinsfile in the branch, plus you must re-trigger the 'testcases' multibranch project indexing
 
 * For further info on how to interact with the server and create new repos on it, please see: [the jkarlos/git-server-docker](https://hub.docker.com/r/jkarlos/git-server-docker/)
     - Note that repos you upload to the server must be in bare repo format not just a normal repo -- usually this is done by cloning a normal repo using `git clone --bare` to, uh, bare-ify it
