@@ -16,6 +16,10 @@ Testbed for measuring scalability of Jenkins.
 * Includes a multibranch project 'testserver' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
 * Configured to have 0 executors -- all executors will be provided by the Swarm Agent Docker containers
 * jenkins/plugins.txt will define plugins included on the master
+* jenkins/CUSTOM-PLUGINs contains plugin HPI or JPI files to land directly on the master
+    - This is good for testing one-off changes with SNAPSHOT versions or otherwise unreleased plugins
+    - Note that **No dependency resolution is done, so your plugins.txt file must include dependencies!**  This can be easier by using a plugins.txt entry for the previous release of the plugin, and then have the custom plugins replace that.
+* (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
 **A Git Server**
