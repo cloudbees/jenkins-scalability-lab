@@ -20,6 +20,7 @@ cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
+docker build -t temp-grafana:1.0 ../grafana
 
 # When docker-compose networking is fixed to detect the bridge network this will work
 # CONFIG_DIR=$(cd .. && pwd) docker-compose up
@@ -44,14 +45,14 @@ docker run --rm -d -p 2222:22 \
 docker run -d --rm -h influx --name influx --network scalability-bridge \
  -p 8083:8083 -p 8086:8086 -p 2015:2015 \
  -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=my_db \
- -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="host.tag1.tag2.measurement*" tutum/influxdb
+ -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="host.tag1.tag2 .measurement*" tutum/influxdb
 
 # Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
 # Ports 81 - grafana, 
 docker run --rm -d --network scalability-bridge \
   -h grafana --name grafana \
   -p 81:3000 \
-  grafana/grafana:4.3.2
+  temp-grafana:1.0
 
 ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:2.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 
