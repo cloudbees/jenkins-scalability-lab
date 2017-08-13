@@ -1,6 +1,14 @@
 FROM jenkinsci/jenkins:2.32.3
 MAINTAINER svanoort
 
+# Install telegraf for monitoring
+USER root
+RUN curl -o /tmp/telegraf.deb https://dl.influxdata.com/telegraf/releases/telegraf_1.3.5-1_amd64.deb \
+    && dpkg -i /tmp/telegraf.deb && rm -f telegraf.deb
+USER jenkins
+COPY telegraf.conf /etc/telegraf/telegraf.conf
+# TODO add autostart for telegraf to the jenkins startup script
+
 # Workaround for bug in plugin.sh script where it tries to remove nonexistent lock
 RUN mkdir -p /usr/share/jenkins/ref/plugins
 RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock
@@ -15,7 +23,6 @@ RUN rm -f /usr/share/jenkins/ref/init.groovy.d/executors.groovy \
     && cd /usr/share/jenkins/ref/plugins/ \
     && for custom_plugin in $(ls *.hpi); do mv "$custom_plugin" "${custom_plugin%.hpi}.jpi"; done
 COPY loadtestsetup.groovy /usr/share/jenkins/ref/init.groovy.d/loadtestsetup.groovy
-
 
 # prevent install wizard running, but tied to this version
 COPY jenkins.* /usr/share/jenkins/ref/
