@@ -16,7 +16,11 @@ import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSCMSource;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 
+// Reporting to InfluxDB via Graphite interface
 import jenkins.metrics.impl.graphite.GraphiteServer;
+
+// Shared libs setup
+import org.jenkinsci.plugins.workflow.libs.*;
 
 Jenkins.instance.setNumExecutors(0);
 Jenkins.instance.setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
@@ -48,3 +52,13 @@ if (proj == null) {
     GitSCMSource scm = new GitSCMSource("gitserver", "ssh://git@gitserver/git-server/repos/testcases.git", "git-ssh", "*", "", false);
     proj.getSourcesList().add(new BranchSource(scm));
 }
+
+/** Adds a shared-libs bound to the gitserver shared-libs folder, with library name 'sort-lib' (for mergesort use)
+    To use, run: `library 'sort-lib' ` in your pipeline
+*/
+LibraryConfiguration sharedLib = new LibraryConfiguration(
+    'sort-lib',
+     new SCMSourceRetriever(new GitSCMSource("gitserver", "ssh://git@gitserver/git-server/repos/shared-libs.git", "git-ssh", "*", "", false))
+);
+sharedLib.setDefaultVersion('master');
+GlobalLibraries.get().setLibraries(Arrays.asList(sharedLib));
