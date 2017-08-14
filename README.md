@@ -47,6 +47,14 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * InfluxDB UI available at [http://localhost:8083/](http://localhost:8083/) for exploring queries
 * Docs for the Influx ingest of Graphite data [here](https://github.com/influxdata/influxdb/blob/master/services/graphite/README.md)
 
+**Telegraf metric collection on Jenkins master**
+* Start by running 'telegraf' on the Jenkins master
+* Available in InfluxDB under database 'telegraf' (you need to create a new grafana datasource, with settings below)
+    - URL: http://influx:8086
+    - Database: 'telegraf'
+    - User: root
+    - Password: somepassword
+
 **Build agents**
 * Connect automatically via the Swarm Agents plugin
 * Note that this requires some custom networking. Swarm agent Docker containers can't simply connect via the HTTP port and JNLP port to the master, they appear to need to be on the same Docker network as the master or at least have a container link created

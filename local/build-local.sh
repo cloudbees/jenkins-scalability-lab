@@ -43,10 +43,12 @@ docker run --rm -d -p 2222:22 \
 # Port 8086 is where Grafana binds to it
 # Note: DB is my_db for stats, username and password below
 # May need to play with the template because it truncates hostname
+# From: https://github.com/appcelerator/docker-influxdb
 docker run -d --rm -h influx --name influx --network scalability-bridge \
  -p 8083:8083 -p 8086:8086 -p 2015:2015 \
  -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=my_db \
- -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="host.tag1.tag2 .measurement*" tutum/influxdb
+ -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" -e GRAPHITE_template="host.measurement*" appcelerator/influxdb:influxdb-1.2.2
+
 
 # Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
 # Ports 81 - grafana, 
