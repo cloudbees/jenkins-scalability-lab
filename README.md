@@ -72,7 +72,7 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 # Manual configuration (currently being automated)
 
 ## To trigger load
-1. Go to "Manage Jenkins" -> "Configure Jenkins", and under "Random Job Builder" set rate > 0
+1. Go to "Manage Jenkins" -> "Configure Jenkins", and under Load Generators, add some and save.  Then clock the "Load Generators" link on the left sidebar and set global autostart to true (click the top button) and activate the generator(s) you want.  Jobs will start
 
 # Troubleshooting
 * **Problem:** Basic issues i.e. something broke
@@ -80,3 +80,9 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * **Problem** Halp, I get an error along the lines of:
     * > Error response from daemon: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network
     * **Solution:** If you're running a VPN, deactivate it, shut down the load test fully, and start over again
+
+# Limitations
+
+* Doesn't automate the configuration (currently it requires manually tickling some files and folders)
+* Requires a Debian-based Jenkins Docker image (not Alpine) due to Telegraf installation - perhaps fixable with direct binary install via [the releases](https://portal.influxdata.com/downloads)
+* Requires fairly modern Jenkins core and plugins to run
