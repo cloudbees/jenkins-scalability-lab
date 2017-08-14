@@ -57,7 +57,7 @@ docker run --rm -d --network scalability-bridge \
   -p 81:3000 \
   temp-grafana:1.0
 
-ROOT_BLKDEV=/dev/$(docker run --rm -it jenkins-scalability-master:2.0 lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
+ROOT_BLKDEV=/dev/$(docker run --rm -it tutum/influxdb lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 
 # Run jenkins, specifying a named volume makes it persistent even after container dies
 docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \

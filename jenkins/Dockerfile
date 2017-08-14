@@ -7,7 +7,10 @@ RUN curl -o /tmp/telegraf.deb https://dl.influxdata.com/telegraf/releases/telegr
     && dpkg -i /tmp/telegraf.deb && rm -f telegraf.deb
 USER jenkins
 COPY telegraf.conf /etc/telegraf/telegraf.conf
-# TODO add autostart for telegraf to the jenkins startup script
+
+# Make tini launch helper script that invokes telegraf as well as Jenkins
+COPY full-start.sh /usr/local/bin/full-start.sh
+ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
 
 # Workaround for bug in plugin.sh script where it tries to remove nonexistent lock
 RUN mkdir -p /usr/share/jenkins/ref/plugins

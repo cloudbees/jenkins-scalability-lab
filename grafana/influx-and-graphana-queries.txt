@@ -10,3 +10,7 @@ SELECT "io_time" FROM "autogen"."diskio" WHERE "name" = 'vda' AND $timeFilter
 select field(io_time) derivative(10s) - to get IOtime per tick!
 
 # For grafana to show all points, remove the "group by" condition
+
+
+# Metrics of interest:
+- vm.timed_waiting.count and vm.*.count are threads?
