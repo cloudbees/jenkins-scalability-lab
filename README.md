@@ -50,6 +50,8 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * Provides semi-persistent storage of data
 
 ## Grafana - Visualization
+
+* Suggested starting point: [Core metrics dashdoard](http://localhost:81/dashboard/db/scalability-lab-core-metrics)
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
     - Configure it to speak to InfluxDB for its data source @ http://influx:8086, databases telegraf and my_db

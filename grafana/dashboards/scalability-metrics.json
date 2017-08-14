@@ -1,50 +1,25 @@
+  * JSON
+
+  * Raw Data
+
+  * Headers
+
+Save
+
+Copy
+
+Pretty Print
+
 {
-  "__inputs": [
-    {
-      "name": "DS_INFLUX-TELEGRAF",
-      "label": "influx-telegraf",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    },
-    {
-      "name": "DS_INFLUX-JENKINS",
-      "label": "influx-jenkins",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "4.3.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": []
   },
+  "description": "what it says on the can",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": null,
+  "id": 1,
   "links": [],
   "rows": [
     {
@@ -56,7 +31,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-TELEGRAF}",
+          "datasource": "influx-telegraf",
           "fill": 1,
           "id": 1,
           "legend": {
@@ -230,7 +205,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-TELEGRAF}",
+          "datasource": "influx-telegraf",
           "fill": 1,
           "id": 3,
           "legend": {
@@ -455,7 +430,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-TELEGRAF}",
+          "datasource": "influx-telegraf",
           "fill": 1,
           "id": 4,
           "legend": {
@@ -635,7 +610,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "fill": 1,
           "id": 2,
           "interval": "",
@@ -758,7 +733,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "fill": 1,
           "id": 5,
           "legend": {
@@ -962,7 +937,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "fill": 1,
           "id": 6,
           "legend": {
@@ -1179,7 +1154,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "description": "Memory usage that might signal leaks",
           "fill": 1,
           "id": 8,
@@ -1342,7 +1317,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "fill": 1,
           "id": 9,
           "legend": {
@@ -1575,7 +1550,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUX-JENKINS}",
+          "datasource": "influx-jenkins",
           "fill": 1,
           "id": 7,
           "legend": {
@@ -1674,7 +1649,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -1703,6 +1678,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Real-Metrics",
-  "version": 2
+  "title": "Scalability Lab Core Metrics",
+  "version": 1
 }
+
