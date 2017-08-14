@@ -9,11 +9,12 @@ Testbed for measuring scalability of Jenkins.
     - All of your graphite data will be lost
 * There are some helpful scripts to run via script console on the master in the 'user-scripts' folder :)
 
-**A Jenkins master**
+## The Jenkins master: our test target
+
 * Available at [http://localhost:8080/](http://localhost:8080/)
     - From other containers, this host is known as "jenkins"
 * Includes credential 'git-ssh' with the SSH key can be used to clone or interact with the Git server, with remote ssh://git@gitserver/git-server/repos/testcases.git
-* Includes a multibranch project 'testserver' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
+* Includes a multibranch project 'testcases' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
 * Configured to have 0 executors -- all executors will be provided by the Swarm Agent Docker containers
 * jenkins/plugins.txt will define plugins included on the master
 * jenkins/CUSTOM-PLUGINs contains plugin HPI or JPI files to land directly on the master
@@ -22,7 +23,8 @@ Testbed for measuring scalability of Jenkins.
 * (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
-**A Git Server**
+##Git Server: testcases, shared libraries and testcase data
+
 * The git server is automatically populated with testcases from gitserver/testcases
     - Each subfolder of 'testcases' becomes a testcase branch in the repo when you build the container
     - Each subfolder MUST have a Jenkinsfile (plus any ancilliary data)
@@ -40,12 +42,18 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * For further info on how to interact with the server and create new repos on it, please see: [the jkarlos/git-server-docker](https://hub.docker.com/r/jkarlos/git-server-docker/)
     - Note that repos you upload to the server must be in bare repo format not just a normal repo -- usually this is done by cloning a normal repo using `git clone --bare` to, uh, bare-ify it
 
-**A Grafana & Influx servers for metrics**
+## InfluxDB server - Metrics (Timeseries) and Events
+* Container name "influx"
+    - Graphite input/output - port 2015: Graphite data input/output (reported by graphite-metrics plugin on Jenkins).  [Docs here](https://github.com/influxdata/influxdb/blob/master/services/graphite/README.md).
+    - Web UI - port 8083 - [http://localhost:8083/](http://localhost:8083/) for exploring [InfluxDB queries and data](https://docs.influxdata.com/influxdb/v1.2/query_language/)
+    - InfluxDB input - port 8086 - used as data source for Grafana
+* Provides semi-persistent storage of data
+
+## Grafana - Visualization
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
-    - Configure it to speak to InfluxDB for its data source @ http://influx:8086 
-* InfluxDB UI available at [http://localhost:8083/](http://localhost:8083/) for exploring queries
-* Docs for the Influx ingest of Graphite data [here](https://github.com/influxdata/influxdb/blob/master/services/graphite/README.md)
+    - Configure it to speak to InfluxDB for its data source @ http://influx:8086, databases telegraf and my_db
+
 
 **Telegraf metric collection on Jenkins master**
 * Start by running 'telegraf' on the Jenkins master
