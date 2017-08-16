@@ -96,19 +96,23 @@ stage ("Unstash the thing we just created") {
 }
 
 // Simple maven build that we've probably all seen before
-node {
+// TODO commented out until tooling is integrated into this environment
+/*node {
+    // TODO: set up tool pre-install on master
     def mvnHome = tool 'M3'
     stage('Check out on agent-3') { 
-    git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+        // TODO add simple clone to git server
+        git 'https://github.com/jglick/simple-maven-project-with-tests.git'
     }
     stage('Build on agent-3') {
         sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
     }
     stage('Archive Results on agent-3') {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archive 'target/*.jar'
-    }
-}
+    */
+    //    junit '**/target/surefire-reports/TEST-*.xml'
+    //    archive 'target/*.jar'
+    //}
+//}
 
 // Read that file that we just stashed into agent-3
 // stage ("Read big file from agent-3") {

@@ -15,12 +15,14 @@ pipeline {
         stage ('echo \$PATH') {
             steps {
                 sh 'echo $PATH'
+                sleep 5
             }
         }
         
         stage ('Output of \'set\'') {
             steps {
                 sh 'set'
+                sleep 15
             }
         }
     } // end stages

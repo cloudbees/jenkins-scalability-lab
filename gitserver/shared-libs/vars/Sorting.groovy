@@ -1,4 +1,4 @@
-/** Library of mergesort functions to use as a testcase for more complex groovy-based logic
+/** Library of mergesort (increasing order) functions to use as a testcase for more complex groovy-based logic
 *   Intended to be used to compare & measure performance with CPS and NonCPS logic, plus CPS + steps
 *     - CPS will stress the CPS interpretation performance
 *     - NonCPS will be used as a baseline for pure Groovy performance
@@ -50,7 +50,7 @@ static int[] merge(int[] first, int[] second) {
     while (i < first.length && j < second.length) {
         int v1 = first[i];
         int v2 = second[j];
-        if (v1 > v2) {
+        if (v1 < v2) {
             output[idx++] = v1; 
             i++;
         } else {
@@ -69,6 +69,7 @@ static int[] merge(int[] first, int[] second) {
             output[idx++] = second[j];
         }
     }
+    return output;
 }
 
 /** Merge two already sorted arrays, to create one output array that is overall sorted
@@ -85,7 +86,7 @@ static int[] mergeCPS(int[] first, int[] second) {
     while (i < first.length && j < second.length) {
         int v1 = first[i];
         int v2 = second[j];
-        if (v1 > v2) {
+        if (v1 < v2) {
             output[idx++] = v1; 
             i++;
         } else {
@@ -104,6 +105,7 @@ static int[] mergeCPS(int[] first, int[] second) {
             output[idx++] = second[j];
         }
     }
+    return output;
 }
 
 static boolean isSortedCPS(int[] array) {
@@ -150,6 +152,7 @@ static int[] mergeSort(int[] array) {
         int first = array[0];
         array[0] = array[1];
         array[1] = first;
+        return array;
     }
 
     // Split the array in half
@@ -181,6 +184,7 @@ static int[] mergeSortCPS(int[] array) {
         int first = array[0];
         array[0] = array[1];
         array[1] = first;
+        return array;
     }
 
     // Split the array in half
@@ -200,3 +204,8 @@ static int[] mergeSortCPS(int[] array) {
     return mergeCPS(mergeSortCPS(firstHalf), mergeSortCPS(secondHalf));
 }
 
+/** Needed because Script security might otherwise block this */
+@NonCPS
+static String concatArrayToString(int[] array) {
+    return array.join(",")
+}

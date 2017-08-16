@@ -2,7 +2,7 @@ FROM grafana/grafana:4.3.2
 COPY grafana.ini /etc/grafana/grafana.ini
 
 # Dashboards - note you need to export them via 'view JSON' to make this work right with datasources
-COPY dashboards/*.json /var/lib/grafana/dashboards/
+# COPY dashboards/*.json /var/lib/grafana/dashboards/
 
 # To enable preconfigured datasources and some of the dashboard stuff
 COPY grafana.db /var/lib/grafana/grafana.db
