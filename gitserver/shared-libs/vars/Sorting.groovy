@@ -1,4 +1,4 @@
-/** Library of mergesort functions to use as a testcase for more complex groovy-based logic
+/** Library of mergesort (increasing order) functions to use as a testcase for more complex groovy-based logic
 *   Intended to be used to compare & measure performance with CPS and NonCPS logic, plus CPS + steps
 *     - CPS will stress the CPS interpretation performance
 *     - NonCPS will be used as a baseline for pure Groovy performance
@@ -50,7 +50,7 @@ static int[] merge(int[] first, int[] second) {
     while (i < first.length && j < second.length) {
         int v1 = first[i];
         int v2 = second[j];
-        if (v1 > v2) {
+        if (v1 < v2) {
             output[idx++] = v1; 
             i++;
         } else {
@@ -86,7 +86,7 @@ static int[] mergeCPS(int[] first, int[] second) {
     while (i < first.length && j < second.length) {
         int v1 = first[i];
         int v2 = second[j];
-        if (v1 > v2) {
+        if (v1 < v2) {
             output[idx++] = v1; 
             i++;
         } else {
