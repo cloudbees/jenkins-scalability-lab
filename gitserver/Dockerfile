@@ -1,7 +1,9 @@
 # ARG REPO_ROOT=testcases
 # TODO add a REPO_FROM_GIT to pull repo from a gitserver
 FROM jkarlos/git-server-docker
+COPY keys /git-server/keys
 COPY testcases /git-server/repo-source
+COPY shared-libs /git-server/shared-libs
 
 # Convert CONTENTS of each subfolder of testcases to a new branch of new repo /git-server/repos/testcases.git
 #  This does initial git setup and creates an initial repo that we will eventually bare clone so it can be served
@@ -24,3 +26,10 @@ RUN git config --global user.email "demouser@example.com" \
     && cd /git-server/repos/ \
     && git clone --bare /git-server/testcases \
     && rm -rf /git-server/testcases
+
+# Add separate repo for shared libs
+RUN cd /git-server/shared-libs \
+   && git init && git add . && git commit -am "Initial content" \
+    && cd /git-server/repos/ \
+    && git clone --bare /git-server/shared-libs \
+    && rm -rf /git-server/shared-libs
