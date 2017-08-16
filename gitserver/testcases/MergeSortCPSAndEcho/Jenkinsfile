@@ -20,10 +20,9 @@ stage('Generate random data') {
 *   This SEEMS reasonable but it means that we repeatedly dump the contents of the groovy program from memory to disk
 *   when serializing execution via program.dat
 */
-static int[] mergeSortCPSAndEchoSteps(int[] array) {
+int[] mergeSortCPSAndEchoSteps(int[] array) {
     echo 'Merging array of size: '+array.length
     if (Sorting.isSortedCPS(array)) {
-        echo 'Array already sorted with length'+array.length
         return array;
     }
 
@@ -36,7 +35,6 @@ static int[] mergeSortCPSAndEchoSteps(int[] array) {
 
     // Split the array in half
     int midpoint = array.length/2;
-    echo 'Splitting array at midpoint: '+midpoint;
     int[] firstHalf = new int[midpoint];
     int[] secondHalf = new int[array.length - midpoint];
     int idx =0;
@@ -47,7 +45,7 @@ static int[] mergeSortCPSAndEchoSteps(int[] array) {
     for (int i = midpoint; i < array.length; i++) {
         secondHalf[idx++] = array[i];
     }
-    echo 'Copied arrays so we can sort and merge them'
+    echo 'Copied arrays so we can sort and merge them, splitting at midpoint: '+midpoint
 
     // Merge 'em for a sorted result'
     return Sorting.mergeCPS(mergeSortCPSAndEchoSteps(firstHalf), mergeSortCPSAndEchoSteps(secondHalf));
