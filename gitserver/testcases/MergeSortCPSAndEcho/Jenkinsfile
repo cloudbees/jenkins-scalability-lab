@@ -21,7 +21,6 @@ stage('Generate random data') {
 *   when serializing execution via program.dat
 */
 int[] mergeSortCPSAndEchoSteps(int[] array) {
-    echo 'Merging array of size: '+array.length
     if (Sorting.isSortedCPS(array)) {
         return array;
     }
@@ -31,7 +30,11 @@ int[] mergeSortCPSAndEchoSteps(int[] array) {
         int first = array[0];
         array[0] = array[1];
         array[1] = first;
+        return array;
     }
+
+    // Echo here so we don't do massive echoing in trivial cases as with above
+    echo 'MergeSorting array of size: '+array.length
 
     // Split the array in half
     int midpoint = array.length/2;
