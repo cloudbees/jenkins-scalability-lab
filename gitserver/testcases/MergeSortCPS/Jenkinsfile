@@ -1,13 +1,12 @@
 /*
 A Jenkinsfile for our merge sort Groovy stuff.
-This represents evaluating somewhat complex pure-groovy pipeline code.
-Consider this a baseline against CPS and CPS+Echo versions.
+This represents evaluating complex Groovy logic in normal pipeline code withoout using @NonCPS annotations
 */
 
 library('sort-lib')
 
 // Set the number of kept builds
-// properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100'], [$class: 'ScannerJobProperty', doNotScan: false]]
+// properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
 // Create our arrays
 int[] arrayToSort = null;
@@ -19,7 +18,7 @@ stage('Generate random data') {
 
 stage ('Sorting') {
     echo 'Starting sorting'
-    sorted = Sorting.mergeSort(arrayToSort)
+    sorted = Sorting.mergeSortCPS(arrayToSort)
     echo 'Sorting done!'
     echo Sorting.concatArrayToString(sorted)    
 }

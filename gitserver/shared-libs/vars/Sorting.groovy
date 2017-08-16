@@ -69,6 +69,7 @@ static int[] merge(int[] first, int[] second) {
             output[idx++] = second[j];
         }
     }
+    return output;
 }
 
 /** Merge two already sorted arrays, to create one output array that is overall sorted
@@ -104,6 +105,7 @@ static int[] mergeCPS(int[] first, int[] second) {
             output[idx++] = second[j];
         }
     }
+    return output;
 }
 
 static boolean isSortedCPS(int[] array) {
@@ -200,3 +202,45 @@ static int[] mergeSortCPS(int[] array) {
     return mergeCPS(mergeSortCPS(firstHalf), mergeSortCPS(secondHalf));
 }
 
+/** Mimics a very common pattern we see where rather complex groovy is mixed with echo steps outputting debugging
+*   This SEEMS reasonable but it means that we repeatedly dump the contents of the groovy program from memory to disk
+*   when serializing execution via program.dat
+*/
+static int[] mergeSortCPSAndEchoSteps(int[] array) {
+    echo 'Merging array of size: '+array.length
+    if (isSortedCPS(array)) {
+        echo 'Array already sorted with length'+array.length
+        return array;
+    }
+
+    if (array.length == 2) {
+        // Guaranteed not to be sorted because we checked already above, so just swap
+        int first = array[0];
+        array[0] = array[1];
+        array[1] = first;
+    }
+
+    // Split the array in half
+    int midpoint = array.length/2;
+    echo 'Splitting array at midpoint: '+midpoint;
+    int[] firstHalf = new int[midpoint];
+    int[] secondHalf = new int[array.length - midpoint];
+    int idx =0;
+    for (int i = 0; i < midpoint; i++) {
+        firstHalf[idx++] = array[i];
+    }
+    idx=0;
+    for (int i = midpoint; i < array.length; i++) {
+        secondHalf[idx++] = array[i];
+    }
+    echo 'Copied arrays so we can sort and merge them'
+
+    // Merge 'em for a sorted result'
+    return mergeCPS(mergeSortCPSAndEchoSteps(firstHalf), mergeSortCPSAndEchoSteps(secondHalf));
+}
+
+/** Needed because Script security might otherwise block this */
+@NonCPS
+static String concatArrayToString(int[] array) {
+    return array.join(",")
+}
