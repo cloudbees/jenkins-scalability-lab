@@ -51,10 +51,15 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 
 ## Grafana - Visualization
 
-* Suggested starting point: [Core metrics dashdoard](http://localhost:81/dashboard/db/scalability-lab-core-metrics)
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
     - Configure it to speak to InfluxDB for its data source @ http://influx:8086, databases telegraf and my_db
+* Suggested starting point: [Core metrics dashdoard](http://localhost:81/dashboard/db/scalability-lab-core-metrics)
+* Note that you may need to change the "root block device id" variable to get IO info to show correctly (it'll be echoed when launching the environment)
+    - For example if the root device for Jenkins is /dev/vda (Mac with "native" Docker, generally), this will be "vda"
+    - You can obtain it by running the following: `echo $(docker run --rm -it tutum/influxdb lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')`
+    - If your Jenkins container has resource limits, the device name will be there
+    - Grafana will also bind in the environment variable "$ROOT_BLKDEV_NAME", so if the environment is fully running you can do `docker exec grafana bash -c 'echo $ROOT_BLKDEV_NAME'`
 
 
 **Telegraf metric collection on Jenkins master**
