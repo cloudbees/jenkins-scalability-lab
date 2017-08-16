@@ -14,3 +14,8 @@ select field(io_time) derivative(10s) - to get IOtime per tick!
 
 # Metrics of interest:
 - vm.timed_waiting.count and vm.*.count are threads?
+
+# Get all load generator measurements matching a regex, to use as query variables
+SHOW MEASUREMENTS with measurement =~ /.*loadgenerator.*/
+
+Set up variable for generator name from that and variable is bound to 'all' and that is set to the default
