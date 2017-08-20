@@ -54,7 +54,7 @@ docker run -d --rm -h influx --name influx --network scalability-bridge \
  -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
 
 
-# Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
+# Separate container for graphana 4
 # Ports 81 - grafana, 
 docker run --rm -d --network scalability-bridge \
   -e ROOT_BLKDEV_NAME=$ROOT_BLKDEV_NAME \
@@ -63,6 +63,7 @@ docker run --rm -d --network scalability-bridge \
   temp-grafana:1.0
 
 # Run jenkins, specifying a named volume makes it persistent even after container dies
+# "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
 docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
   -p 8080:8080 -p 9011:9011 \
   -v jenkins_home:/var/jenkins_home \
