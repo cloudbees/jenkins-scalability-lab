@@ -87,6 +87,16 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * **Problem** Halp, I get an error along the lines of:
     * > Error response from daemon: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network
     * **Solution:** If you're running a VPN, deactivate it, shut down the load test fully, and start over again
+* **Problem** I am running on Mac and trying to attach a profiler but it fails.  For example, I use VisualVM and add a JMX connection (with SSL requirement off, per requirements) to localhost:9011
+    * **Solution:** Probably have to use Linux if you want to attach a profiler or run the VM in a linux VM via docker-machine rather than "native" docker. This works fine on Linux and appears to relate to the network setup on Mac.  Things I've tried unsuccessfully:
+     * Tried https://stackoverflow.com/questions/35108868/how-do-i-attach-visualvm-to-a-simple-java-process-running-in-a-docker-container
+         - Including hostname 127.0.0.1 for the `rmi.server.hostname` and 'jenkins'
+     * Tried https://stackoverflow.com/questions/41267305/docker-for-mac-vm-ip 
+         - Running this on Mac `soc TCP-LISTEN:9011,reuseaddr,fork,bind=localhost UNIX-CONNECT:/var/run/docker.sock`
+         - with the container using:
+        `-Djava.rmi.server.hostname=jenkins` and `--network host --add-host=jenkins:127.0.0.1` and BOTH port 9011 exposed and not exposed
+         - with `--network scalability-bridge` and the port 9011 exposed or not from container
+     * Launch Jenkins, replacing the docker bridge network with entries like  `--network host --add-host=jenkins:127.0.0.1` (for Jenkins, others will need it too)
 
 # Limitations
 
