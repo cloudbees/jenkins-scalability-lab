@@ -31,7 +31,10 @@ COPY loadtestsetup.groovy /usr/share/jenkins/ref/init.groovy.d/loadtestsetup.gro
 COPY jenkins.* /usr/share/jenkins/ref/
 
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
-ENV JENKINS_JAVA_OPTIONS "-Dgraphite.metrics.intervalSeconds=5 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
+# Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
+ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
+
+# Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
 # RSA key hack, try to set it up so it doesn't use tmp in the near future
