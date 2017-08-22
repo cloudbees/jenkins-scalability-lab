@@ -1,0 +1,36 @@
+pipeline {
+
+    agent any
+
+    tools {
+        maven 'maven'
+        jdk 'jdk8'
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    stages {
+        stage ('Build It') {
+            steps {
+                sh "mvn -Dmaven.test.failure.ignore clean package"
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo "-- always -- step in post block."
+        }
+        success {
+            echo "-- success -- step in post block -- HOORAY to things that work!"
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive 'target/*.jar'
+        }
+        failure {
+            echo "-- failure -- step in post block -- BOO to things that don't work."
+        }
+    }
+}
