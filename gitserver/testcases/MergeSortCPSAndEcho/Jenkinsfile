@@ -6,13 +6,13 @@ This represents a common practice of intermixing steps with somewhat complex Gro
 library('sort-lib')
 
 // Set the number of kept builds
-// properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
 // Create our arrays
 int[] arrayToSort = null;
 int[] sorted = null;
 stage('Generate random data') {
-    arrayToSort = Sorting.generateRandomArrayCPS(10000);
+    arrayToSort = Sorting.generateRandomArrayCPS(1000);
     echo 'Data generation done'
 }
 

@@ -4,7 +4,7 @@ parallel-plus-steps
 Runs a bunch of echos in a parallelized series of...things.
 */
 
-// properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
 int branchCount = 15;
 int stepsPerBranch = 30;

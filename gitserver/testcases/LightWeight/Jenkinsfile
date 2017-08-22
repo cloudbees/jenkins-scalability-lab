@@ -3,7 +3,7 @@ Lightweight pipeline that should not put much stress on master and doesn't use a
 Useful for when we simply need a few jobs running but don't want to bog down
 */
 
-//properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
 
 echo 'just spinning here'
 sleep 15
