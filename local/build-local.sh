@@ -63,18 +63,16 @@ docker run --rm -d --network scalability-bridge \
   -p 81:3000 \
   temp-grafana:1.0
 
-# Run jenkins, specifying a named volume makes it persistent even after container dies
-# "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
-docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
-  -p 8080:8080 -p 9011:9011 \
-  -v jenkins_home:/var/jenkins_home \
-  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
-  jenkins-scalability-master:2.0 
-
 # Autoconnects & creates agents
 docker run --rm -d --network scalability-bridge \
   --name agent -l role=agent \
   -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors 4 -description swarm-slave -deleteExistingClients" \
   temp-buildagent:1.0
 
-docker attach jenkins 
+# Run jenkins, specifying a named volume makes it persistent even after container dies
+# "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
+docker run --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
+  -p 8080:8080 -p 9011:9011 \
+  -v jenkins_home:/var/jenkins_home \
+  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
+  jenkins-scalability-master:2.0
