@@ -19,7 +19,7 @@ fi
 CONFIG_DIR=$(cd .. && pwd)
 cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
-docker build -t jenkins-scalability-master:2.0 ../jenkins
+docker build -t jenkins-scalability-master:2.0-recent ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
 docker build -t temp-grafana:1.0 ../grafana
 docker build -t temp-buildagent:1.0 ../buildagent
@@ -75,4 +75,4 @@ docker run --rm -it -h jenkins --name jenkins -l role=jenkins --network scalabil
   -p 8080:8080 -p 9011:9011 \
   -v jenkins_home:/var/jenkins_home \
   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
-  jenkins-scalability-master:2.0
+  jenkins-scalability-master:2.0-recent

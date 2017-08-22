@@ -1,4 +1,5 @@
-FROM jenkinsci/jenkins:2.32.3
+FROM jenkinsci/jenkins:2.60.2
+
 MAINTAINER svanoort
 
 # Install telegraf for monitoring
@@ -12,13 +13,16 @@ COPY telegraf.conf /etc/telegraf/telegraf.conf
 COPY full-start.sh /usr/local/bin/full-start.sh
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
 
-# Workaround for bug in plugin.sh script where it tries to remove nonexistent lock
-RUN mkdir -p /usr/share/jenkins/ref/plugins
-RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock
-
-# Basic config - install plugins and customize the startup groovy script
+# Plugin installs: custom plugins, test framework plugins + custom snapshots 
+# Lock files write is a workaround for a bug in plugin install file where it tries to remove nonexistent lock
+# Basic config - install custom and test framework plugins + custom snapshots
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-RUN /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
+COPY minimal-plugins.txt /usr/share/jenkins/ref/minimal-plugins.txt
+RUN mkdir -p /usr/share/jenkins/ref/plugins \
+    && echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
+    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
+RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
+    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/minimal-plugins.txt | tr '\n' ' ')
 COPY CUSTOM-PLUGINS/*.*pi /usr/share/jenkins/ref/plugins/
 
 # Remove stale executor files and rename HPI files to JPI files to input custom versions
