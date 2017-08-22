@@ -7,7 +7,7 @@ Consider this a baseline against CPS and CPS+Echo versions.
 library('sort-lib')
 
 // Set the number of kept builds
-properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100'], [$class: 'ScannerJobProperty', doNotScan: false]]
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '100')), pipelineTriggers([])])
 
 // Create our arrays
 int[] arrayToSort = null;
