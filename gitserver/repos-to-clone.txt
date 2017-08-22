@@ -1,0 +1,3 @@
+# All of these remote repos will be cloned into the test repo for test use
+# With comment lines like this ignored -- note that the repos must be public for now
+https://github.com/jglick/simple-maven-project-with-tests.git

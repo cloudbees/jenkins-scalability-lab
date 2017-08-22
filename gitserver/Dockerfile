@@ -33,3 +33,8 @@ RUN cd /git-server/shared-libs \
     && cd /git-server/repos/ \
     && git clone --bare /git-server/shared-libs \
     && rm -rf /git-server/shared-libs
+
+COPY repos-to-clone.txt /git-server/repos
+
+# Clone remote repos into local gitserver for test use
+RUN cd /git-server/repos && for repo in $(cat repos-to-clone.txt | tr -d '[ ]' | grep -v '^#' ); do git clone --bare $repo; done
