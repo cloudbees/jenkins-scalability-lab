@@ -1,0 +1,63 @@
+/*
+A Jenkinsfile for our merge sort Groovy stuff.
+This represents a common practice of intermixing steps with somewhat complex Groovy processing
+*/
+
+library('sort-lib')
+
+// Set the number of kept builds
+properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+
+// Create our arrays
+int[] arrayToSort = null;
+int[] sorted = null;
+stage('Generate random data') {
+    arrayToSort = Sorting.generateRandomArrayCPS(1000);
+    echo 'Data generation done'
+}
+
+/** Mimics a very common pattern we see where rather complex groovy is mixed with echo steps outputting debugging
+*   This SEEMS reasonable but it means that we repeatedly dump the contents of the groovy program from memory to disk
+*   when serializing execution via program.dat
+*/
+int[] mergeSortCPSAndEchoSteps(int[] array) {
+    if (Sorting.isSortedCPS(array)) {
+        return array;
+    }
+
+    if (array.length == 2) {
+        // Guaranteed not to be sorted because we checked already above, so just swap
+        int first = array[0];
+        array[0] = array[1];
+        array[1] = first;
+        return array;
+    }
+
+    // Echo here so we don't do massive echoing in trivial cases as with above
+    echo 'MergeSorting array of size: '+array.length
+
+    // Split the array in half
+    int midpoint = array.length/2;
+    int[] firstHalf = new int[midpoint];
+    int[] secondHalf = new int[array.length - midpoint];
+    int idx =0;
+    for (int i = 0; i < midpoint; i++) {
+        firstHalf[idx++] = array[i];
+    }
+    idx=0;
+    for (int i = midpoint; i < array.length; i++) {
+        secondHalf[idx++] = array[i];
+    }
+    echo 'Copied arrays so we can sort and merge them, splitting at midpoint: '+midpoint
+
+    // Merge 'em for a sorted result'
+    return Sorting.mergeCPS(mergeSortCPSAndEchoSteps(firstHalf), mergeSortCPSAndEchoSteps(secondHalf));
+}
+
+stage ('Sorting') {
+    echo 'Starting sorting'
+    sorted = mergeSortCPSAndEchoSteps(arrayToSort)
+    echo 'Sorting done!'
+    echo Sorting.concatArrayToString(sorted)    
+}
+sleep 10
