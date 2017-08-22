@@ -22,6 +22,7 @@ cp id_rsa* "${CONFIG_DIR}/jenkins"
 docker build -t jenkins-scalability-master:2.0 ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
 docker build -t temp-grafana:1.0 ../grafana
+docker build -t temp-buildagent:1.0 ../buildagent
 
 # Obtain the block device name of Jenkins root, for use in resource limits and querying io stats
 ROOT_BLKDEV_NAME=$(docker run --rm -it tutum/influxdb lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
@@ -74,6 +75,6 @@ docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalabili
 docker run --rm -d --network scalability-bridge \
   --name agent -l role=agent \
   -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors 4 -description swarm-slave -deleteExistingClients" \
-  vfarcic/jenkins-swarm-agent
+  temp-buildagent:1.0
 
 docker attach jenkins 
