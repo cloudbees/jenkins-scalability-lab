@@ -74,5 +74,6 @@ docker run --rm -d --network scalability-bridge \
 docker run --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
   -p 8080:8080 -p 9011:9011 \
   -v jenkins_home:/var/jenkins_home \
-  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
   jenkins-scalability-master:2.0-recent
+
+#   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
