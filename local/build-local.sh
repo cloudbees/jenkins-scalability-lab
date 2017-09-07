@@ -17,8 +17,9 @@ fi
 
 # Needed to pick up git configs and some other things
 CONFIG_DIR=$(cd .. && pwd)
-cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
-cp id_rsa* "${CONFIG_DIR}/jenkins"
+mkdir -p "${CONFIG_DIR}/gitserver/keys/"
+cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys/"
+cp id_rsa* "${CONFIG_DIR}/jenkins/"
 docker build -t jenkins-scalability-master:2.0-recent ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
 docker build -t temp-grafana:1.0 ../grafana
@@ -50,8 +51,8 @@ docker run --rm -d -p 2222:22 \
 # From: https://github.com/appcelerator/docker-influxdb
 docker run -d --rm -h influx --name influx --network scalability-bridge \
  -p 8083:8083 -p 8086:8086 -p 2015:2015 \
- -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=my_db \
- -e GRAPHITE_DB="my_db" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" \
+ -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=hydra \
+ -e GRAPHITE_DB="hydra" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" \
  -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
 
 
