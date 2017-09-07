@@ -53,7 +53,7 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 
 * Grafana available at [http://localhost:81/](http://localhost:81/)
     - Login is admin, password admin
-    - Configure it to speak to InfluxDB for its data source @ http://influx:8086, databases telegraf and my_db
+    - Configure it to speak to InfluxDB for its data source @ http://influx:8086, database "hydra"
 * Suggested starting point: [Core metrics dashdoard](http://localhost:81/dashboard/db/scalability-lab-core-metrics)
 * Note that you may need to change the "root block device id" variable to get IO info to show correctly (it'll be echoed when launching the environment)
     - For example if the root device for Jenkins is /dev/vda (Mac with "native" Docker, generally), this will be "vda"
@@ -64,9 +64,9 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 
 **Telegraf metric collection on Jenkins master**
 * Start by running 'telegraf' on the Jenkins master
-* Available in InfluxDB under database 'telegraf' (you need to create a new grafana datasource, with settings below)
+* Available in InfluxDB under database 'hydra' (you need to create a new grafana datasource, with settings below)
     - URL: http://influx:8086
-    - Database: 'telegraf'
+    - Database: 'hydra'
     - User: root
     - Password: somepassword
 
