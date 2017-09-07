@@ -9,6 +9,15 @@ RUN curl -o /tmp/telegraf.deb https://dl.influxdata.com/telegraf/releases/telegr
 USER jenkins
 COPY telegraf.conf /etc/telegraf/telegraf.conf
 
+########
+# Karl WIP:
+# I'd like to not have to manually install tools `jdk8` and `mvn` from the Jenkins UI once 
+# the container is up. I'd like that to be automatic.
+# Download and install Maven
+# RUN wget --no-verbose -O /tmp/apache-maven-3.5.0-bin.tar.gz http://archive.apache.org/dist/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
+# Verify the Maven download
+# RUN echo "35c39251d2af99b6624d40d801f6ff02 /tmp/apache-maven-3.5.0-bin.tar.gz" | md5sum -c
+
 # Make tini launch helper script that invokes telegraf as well as Jenkins
 COPY full-start.sh /usr/local/bin/full-start.sh
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
