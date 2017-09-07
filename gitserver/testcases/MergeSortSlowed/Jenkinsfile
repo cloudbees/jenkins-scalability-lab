@@ -1,6 +1,7 @@
 /*
 A Jenkinsfile for our merge sort Groovy stuff.
-This represents evaluating complex Groovy logic in normal pipeline code withoout using @NonCPS annotations
+This represents evaluating somewhat complex pure-groovy pipeline code.
+Consider this a baseline against CPS and CPS+Echo versions.
 */
 
 library('sort-lib')
@@ -12,13 +13,14 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKe
 int[] arrayToSort = null;
 int[] sorted = null;
 stage('Generate random data') {
-    arrayToSort = Sorting.generateRandomArrayCPS(1000);
+    arrayToSort = Sorting.generateRandomArray(1000);
     echo 'Data generation done'
 }
 
 stage ('Sorting') {
     echo 'Starting sorting'
-    sorted = Sorting.mergeSortCPS(arrayToSort)
+    sorted = Sorting.mergeSort(arrayToSort)
     echo 'Sorting done!'
     echo Sorting.concatArrayToString(sorted)    
 }
+sleep 10

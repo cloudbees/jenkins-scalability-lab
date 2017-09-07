@@ -19,9 +19,10 @@ fi
 CONFIG_DIR=$(cd .. && pwd)
 cp id_rsa.pub "${CONFIG_DIR}/gitserver/keys"
 cp id_rsa* "${CONFIG_DIR}/jenkins"
-docker build -t jenkins-scalability-master:2.0 ../jenkins
+docker build -t jenkins-scalability-master:2.0-recent ../jenkins
 docker build -t temp-gitserver:1.0 ../gitserver
 docker build -t temp-grafana:1.0 ../grafana
+docker build -t temp-buildagent:1.0 ../buildagent
 
 # Obtain the block device name of Jenkins root, for use in resource limits and querying io stats
 ROOT_BLKDEV_NAME=$(docker run --rm -it tutum/influxdb lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
@@ -54,7 +55,7 @@ docker run -d --rm -h influx --name influx --network scalability-bridge \
  -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
 
 
-# Separate container for graphana 4 until we can build a custom Graphite-Grafana-Carbon-Cache image
+# Separate container for graphana 4
 # Ports 81 - grafana, 
 docker run --rm -d --network scalability-bridge \
   -e ROOT_BLKDEV_NAME=$ROOT_BLKDEV_NAME \
@@ -62,17 +63,16 @@ docker run --rm -d --network scalability-bridge \
   -p 81:3000 \
   temp-grafana:1.0
 
-# Run jenkins, specifying a named volume makes it persistent even after container dies
-docker run --rm -d -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
-  -p 8080:8080 -p 9011:9011 \
-  -v jenkins_home:/var/jenkins_home \
-  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
-  jenkins-scalability-master:2.0 
-
 # Autoconnects & creates agents
 docker run --rm -d --network scalability-bridge \
   --name agent -l role=agent \
   -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors 4 -description swarm-slave -deleteExistingClients" \
-  vfarcic/jenkins-swarm-agent
+  temp-buildagent:1.0
 
-docker attach jenkins 
+# Run jenkins, specifying a named volume makes it persistent even after container dies
+# "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
+docker run --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
+  -p 8080:8080 -p 9011:9011 \
+  -v jenkins_home:/var/jenkins_home \
+  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
+  jenkins-scalability-master:2.0-recent

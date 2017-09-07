@@ -1,0 +1,23 @@
+# Metrics to filter 
+- jenkins.project.*  (useless project metrics)
+
+# Metrics of interest
+- jenkins.job.scheduled -- rate jobs are scheduled
+    + for load generator that will be the rate they are completed, after the initial ramp-up (handy!)
+    + m1_rate == jobs per minute
+
+- QueueStats for queueing issues
+- NodeStats for DurableTask efficiency
+- job.building.duration.count 
+    + parallel builds
+    + Derivative = concurrent builds (default is 1 min sampling)
+- job.building.duration.p50 = median build time in minutes
+    + But need to average over a longer interval for longer jobs
+    + However it seems to be reporting completely useless timings:
+        * i.e. 1.3 for 15 second builds - artifact of sampling interval of 5 seconds, so not enough builds complete?
+    + job.building.duration.m5_rate gives more consistent numbers but they do not add up!
+        * 3 concurrency, 1 secondish builds (maybe 1.5) gives about 263
+        * 3 concurrency, 15 second builds gives about 24
+
+- TODO:
+    + Add a metrics meter for job *completion* rate

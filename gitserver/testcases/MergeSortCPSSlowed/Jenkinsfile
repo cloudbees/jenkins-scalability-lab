@@ -22,3 +22,4 @@ stage ('Sorting') {
     echo 'Sorting done!'
     echo Sorting.concatArrayToString(sorted)    
 }
+sleep 10

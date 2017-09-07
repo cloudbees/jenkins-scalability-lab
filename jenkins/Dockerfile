@@ -1,4 +1,5 @@
-FROM jenkinsci/jenkins:2.32.3
+FROM jenkinsci/jenkins:2.60.2
+
 MAINTAINER svanoort
 
 # Install telegraf for monitoring
@@ -12,13 +13,16 @@ COPY telegraf.conf /etc/telegraf/telegraf.conf
 COPY full-start.sh /usr/local/bin/full-start.sh
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
 
-# Workaround for bug in plugin.sh script where it tries to remove nonexistent lock
-RUN mkdir -p /usr/share/jenkins/ref/plugins
-RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock
-
-# Basic config - install plugins and customize the startup groovy script
+# Plugin installs: custom plugins, test framework plugins + custom snapshots 
+# Lock files write is a workaround for a bug in plugin install file where it tries to remove nonexistent lock
+# Basic config - install custom and test framework plugins + custom snapshots
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-RUN /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
+COPY minimal-plugins.txt /usr/share/jenkins/ref/minimal-plugins.txt
+RUN mkdir -p /usr/share/jenkins/ref/plugins \
+    && echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
+    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
+RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
+    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/minimal-plugins.txt | tr '\n' ' ')
 COPY CUSTOM-PLUGINS/*.*pi /usr/share/jenkins/ref/plugins/
 
 # Remove stale executor files and rename HPI files to JPI files to input custom versions
@@ -31,7 +35,11 @@ COPY loadtestsetup.groovy /usr/share/jenkins/ref/init.groovy.d/loadtestsetup.gro
 COPY jenkins.* /usr/share/jenkins/ref/
 
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
-ENV JENKINS_JAVA_OPTIONS "-Dgraphite.metrics.intervalSeconds=5 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1"
+# Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
+ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
+-Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy"
+
+# Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
 # RSA key hack, try to set it up so it doesn't use tmp in the near future

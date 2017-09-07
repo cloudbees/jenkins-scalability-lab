@@ -26,7 +26,7 @@ int randomFileSize = 1000000;
 // This is something we thought might be clever, but it turns out, maybe not.
 // Seems that with our deliberately-chosen levels of Pipeline plugins, which are 
 // on the old side, this doesn't work right.
-// properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', artifactNumToKeepStr: '100']]
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '100')), pipelineTriggers([])])
 
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {

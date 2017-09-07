@@ -3,7 +3,15 @@ Lightweight pipeline that should not put much stress on master and doesn't use a
 Useful for when we simply need a few jobs running but don't want to bog down
 */
 
-//properties [[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', daysToKeepStr: '-1', numToKeepStr: '100']], [$class: 'ScannerJobProperty', doNotScan: false]]
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '100')), pipelineTriggers([])])
 
-echo 'just spinning here'
-sleep 15
+int randomFileSize = 1000;
+// Do 5 cycles of reading 1K of output from executor, then sleeping for 5 seconds
+for (int i = 0; i < 5; i++) {
+    stage ("Stage Number $i") {
+        node {
+            sh "cat /dev/urandom | env LC_CTYPE=c tr -dc \'[:alpha:]\' | head -c $randomFileSize"
+            sh 'sleep 5'
+        }
+    }
+}
