@@ -12,7 +12,8 @@ node {
     }
     
     stage('Check out') { 
-        git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+        // git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+        git 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
     }
     
     stage('Build it') {
