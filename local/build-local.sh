@@ -26,6 +26,7 @@ docker build -t temp-grafana:1.0 ../grafana
 docker build -t temp-buildagent:1.0 ../buildagent
 
 # Obtain the block device name of Jenkins root, for use in resource limits and querying io stats
+# TODO replace me with one of the existing images - but fix the output settings that are currently problems
 ROOT_BLKDEV_NAME=$(docker run --rm -it tutum/influxdb lsblk -d -o NAME | tail -n 1 | tr -d '\r' | tr -d '\n')
 ROOT_BLKDEV="/dev/$ROOT_BLKDEV_NAME"
 
