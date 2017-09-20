@@ -9,15 +9,21 @@ node {
     // def java = tool 'jdk8'
     
     stage ('Sanity Check') {
-        echo "where is maven"
+        echo "Where is maven?"
         sh "which mvn"
-        echo "where is java"
+        echo "Where is java?"
         sh "which java"
     }
     
     stage('Check out') { 
-        // git 'https://github.com/jglick/simple-maven-project-with-tests.git'
-        git 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
+        // Can probably get by with putting the credential thing here.
+        // Two ways to do it:
+        //   git credentialsID: 'put-the-credentials-id-here', url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
+        //   - or - 
+        //   withCredentials(put-the-credentials-id-here) { 
+        //       git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git' 
+        //   }
+        git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
     }
     
     stage('Build it') {

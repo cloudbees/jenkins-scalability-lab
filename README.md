@@ -81,7 +81,7 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 
 # Troubleshooting
 * **Problem:** Basic issues i.e. something broke
-    - **Solution:** run the shutdown script, run `docker rm volume jenkins_home`, and run the build-local.sh script again
+    - **Solution:** run the shutdown script, run `docker volume rm jenkins_home`, and run the build-local.sh script again
 * **Problem:** Error fetching plugin
     - **Solution:** Look up the plugin in the Jenkins wiki and see if it was just released (may not be fully available yet) - if so, you can hardcode a plugins.txt dependency on the previous version to work around this. 
 * **Problem** Halp, I get an error along the lines of:
