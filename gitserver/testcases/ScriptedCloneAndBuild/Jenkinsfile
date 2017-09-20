@@ -24,7 +24,10 @@ node {
         //       git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git' 
         //   }
         // git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
-        git credentialsID: 'git-ssh', url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
+        // git credentialsID: 'git-ssh', url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
+        withCredentials('git') {
+            git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
+        }
     }
     
     stage('Build it') {
