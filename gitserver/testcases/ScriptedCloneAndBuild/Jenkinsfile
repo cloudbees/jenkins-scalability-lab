@@ -32,7 +32,7 @@ node {
         withCredentials(
             [
                 // [$class: 'UsernamePasswordMultiBinding', credentialsId: 'npm', usernameVariable: 'NPM_USERNAME', passwordVariable: 'NPM_PASSWORD'],
-                [$class: 'StringBinding', credentialsId: 'git-ssh', variable: 'GIT'],
+                [$class: 'sshUserPrivateKey', credentialsId: 'git-ssh', variable: 'GIT'],
             ]) {
                 // sh npm set registry "${NPM_REGISTRY}"
                 // sh npm-cli-login -u "${$NPM_USERNAME}" -p "${$NPM_PASSWORD}" -e "${$NPM_EMAIL}" -r "${NPM_REGISTRY}"
