@@ -24,10 +24,23 @@ node {
         //       git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git' 
         //   }
         // git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
-        git (credentialsID: "git", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
+        // git (credentialsID: "git", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
         // withCredentials('git') {
         //     git url: 'ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git'
         // }
+
+        withCredentials(
+            [
+                // [$class: 'UsernamePasswordMultiBinding', credentialsId: 'npm', usernameVariable: 'NPM_USERNAME', passwordVariable: 'NPM_PASSWORD'],
+                [$class: 'StringBinding', credentialsId: 'git-ssh', variable: 'GIT'],
+            ]) {
+                // sh npm set registry "${NPM_REGISTRY}"
+                // sh npm-cli-login -u "${$NPM_USERNAME}" -p "${$NPM_PASSWORD}" -e "${$NPM_EMAIL}" -r "${NPM_REGISTRY}"
+                // sh npm i
+                // sh security -v unlock-keychain -p "..." "$HOME/Library/Keychains/login.keychain"
+                // sh grunt build --sign --beta
+                git url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git"
+            }
     }
     
     stage('Build it') {
