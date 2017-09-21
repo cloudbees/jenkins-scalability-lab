@@ -1,8 +1,5 @@
 node {
-    // TODO:
-    // We need to add a withCredentials(whatever) thing to use the credential 
-    // for the username `git`. That Credential is already on Jenkins, just have to 
-    // write it into this Jenkinsfile the right way.
+
     withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
     stage ('Sanity Check') {
