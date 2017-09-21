@@ -4,10 +4,7 @@ node {
     // for the username `git`. That Credential is already on Jenkins, just have to 
     // write it into this Jenkinsfile the right way.
     withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
-    
-    // def mvnHome = tool 'maven'
-    // def java = tool 'jdk8'
-    
+        
     stage ('Sanity Check') {
         echo "Where is maven?"
         sh "which mvn"
@@ -17,9 +14,6 @@ node {
     
     stage('Check out') { 
         git (credentialsID: "git-ssh", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
-        // withCredentials([sshUserPrivateKey(credentialsId: 'git-ssh', keyFileVariable: 'temporary-key', passphraseVariable: '', usernameVariable: 'git')]) {
-        //     git url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git"
-        // }
     }
     
     stage('Build it') {
