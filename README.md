@@ -23,7 +23,7 @@ Testbed for measuring scalability of Jenkins.
 * (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
-##Git Server: testcases, shared libraries and testcase data
+## Git Server: testcases, shared libraries and testcase data
 
 * The git server is automatically populated with testcases from gitserver/testcases
     - Each subfolder of 'testcases' becomes a testcase branch in the repo when you build the container
