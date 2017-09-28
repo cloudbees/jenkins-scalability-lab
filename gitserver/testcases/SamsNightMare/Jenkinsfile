@@ -95,24 +95,32 @@ stage ("Unstash the thing we just created") {
     }
 }
 
-// Simple maven build that we've probably all seen before
-// TODO commented out until tooling is integrated into this environment
-/*node {
-    // TODO: set up tool pre-install on master
-    def mvnHome = tool 'M3'
-    stage('Check out on agent-3') { 
-        // TODO add simple clone to git server
-        git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+node {
+    def mvnHome = tool 'maven'
+    withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
+        
+        stage ('Sanity Check') {
+            echo "Where is maven?"
+            sh "which mvn"
+            echo "Where is java?"
+            sh "which java"
+        }
+        
+        stage('Check out') { 
+            git (credentialsId: "git-ssh", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
+        }
+        
+        stage('Build it') {
+            sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+            // sh "mvn -Dmaven.test.failure.ignore clean package"
+        }
+        
+        stage('Archive our results') {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive 'target/*.jar'
+        }
     }
-    stage('Build on agent-3') {
-        sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
-    }
-    stage('Archive Results on agent-3') {
-    */
-    //    junit '**/target/surefire-reports/TEST-*.xml'
-    //    archive 'target/*.jar'
-    //}
-//}
+}
 
 // Read that file that we just stashed into agent-3
 // stage ("Read big file from agent-3") {
