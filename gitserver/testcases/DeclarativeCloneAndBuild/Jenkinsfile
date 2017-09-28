@@ -1,5 +1,10 @@
 pipeline {
 
+    /* 
+    If this is set to 
+        agent { label 'master'} 
+    it'll work fine.
+    */ 
     agent any
 
     tools {
@@ -23,9 +28,6 @@ pipeline {
                 sh 'which java'
                 echo '--> Build the thing'
                 sh "mvn -X clean package"
-                // sh "mvn -X -Dmaven.test.failure.ignore clean package"
-                // sh 'mvn clean verify -Dmaven.test.failure.ignore=true'
-                // sh "mvn -Dmaven.test.failure.ignore clean package"
             }
         }
 
