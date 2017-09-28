@@ -100,10 +100,14 @@ node {
     withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
         stage ('Sanity Check') {
-            echo "Where is maven?"
-            sh "which mvn"
-            echo "Where is java?"
-            sh "which java"
+            echo '--> What is M2_HOME'
+            sh 'echo "M2_HOME: ${M2_HOME}"'
+            echo '--> What is JAVA_HOME'
+            sh 'echo "JAVA_HOME: ${JAVA_HOME}"'
+            echo '--> Where is java?'
+            sh 'which java'
+            echo '--> Build the thing'
+            sh "mvn -X clean package"
         }
         
         stage('Check out') { 
@@ -111,8 +115,12 @@ node {
         }
         
         stage('Build it') {
-            sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
-            // sh "mvn -Dmaven.test.failure.ignore clean package"
+            node {
+                // sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+                // sh "mvn -Dmaven.test.failure.ignore clean package"
+                echo '--> Build the thing'
+                sh "mvn -X clean package"
+            }
         }
         
         stage('Archive our results') {
