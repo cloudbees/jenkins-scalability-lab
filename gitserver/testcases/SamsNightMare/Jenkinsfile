@@ -28,6 +28,11 @@ int randomFileSize = 1000000;
 // on the old side, this doesn't work right.
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '100')), pipelineTriggers([])])
 
+stage ("Get PWD") {
+    echo "--> PWD is: "
+    sh "echo $PWD"
+}
+
 stage ("20 echos") {
     for (int i = 0; i < 20; i++) {
         echo "Echo number $i"
@@ -95,7 +100,7 @@ stage ("Unstash the thing we just created") {
     }
 }
 
-node {
+//node {
     // def mvnHome = tool 'maven'
     // withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
@@ -117,12 +122,5 @@ node {
             archive 'target/*.jar'
         }
     // } // this ends our would-be withEnv block.
-}
+//}
 
-// Read that file that we just stashed into agent-3
-// stage ("Read big file from agent-3") {
-//     node {
-//         echo "dummy step"
-        
-//     }
-// }
