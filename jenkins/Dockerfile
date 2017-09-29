@@ -56,8 +56,8 @@ USER root
 COPY id_rsa* /usr/share/jenkins/ref/
 
 # Let's try copying a maven config over.
-# COPY jenkins.mvn.GlobalMavenConfig.xml /usr/share/jenkins/ref/
-# COPY hudson.tasks.Maven.xml /usr/share/jenkins/ref/
+COPY jenkins.mvn.GlobalMavenConfig.xml /usr/share/jenkins/ref/
+COPY hudson.tasks.Maven.xml /usr/share/jenkins/ref/
 
 # Chown and chmod files copied in from externally
 RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa* \
