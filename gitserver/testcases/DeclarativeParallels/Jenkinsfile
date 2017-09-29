@@ -2,6 +2,10 @@
 This is one of my favorites from the Declarative 1.2 
 release testing. This should exercise Declarative's 
 parallel stage execution. 
+
+NOTE: This will NOT WORK unless the Declarative plugins 
+have been upgraded to 1.2.
+
 */ 
 
 pipeline {
