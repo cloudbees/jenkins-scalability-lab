@@ -29,7 +29,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-2 OVERRIDES') {
@@ -40,7 +40,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-3 OVERRIDES') {
@@ -51,7 +51,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-4 OVERRIDES') {
@@ -62,7 +62,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-5 OVERRIDES') {
@@ -73,7 +73,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-6 OVERRIDES') {
@@ -84,7 +84,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-7 OVERRIDES') {
@@ -95,7 +95,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
 
@@ -107,7 +107,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-9 OVERRIDES') {
@@ -118,7 +118,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
                 stage('parallel-10 OVERRIDES') {
@@ -129,7 +129,7 @@ pipeline {
                         echo "Let's check our environment variables"
                         echo SOMETHING_TO_INHERIT
                         echo SOMETHING_TO_OVERRIDE
-                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 10000; done'
+                        sh 'for i in `seq 1 100`; do cat /dev/urandom | env LC_CTYPE=c tr -dc \\\'[:alpha:]\\\' | head -c 50000; done'
                     }
                 }
             } // end of parallel
