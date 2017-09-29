@@ -71,7 +71,6 @@ docker run --rm -d --network scalability-bridge \
 docker run --rm -d --network scalability-bridge \
   --name agent -l role=agent \
   -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors 4 -description swarm-slave -deleteExistingClients" \
-  -e "JAVA_HOME=/tools/hudson.model.JDK/jdk8" \
   temp-buildagent:1.0
 
 # Run jenkins, specifying a named volume makes it persistent even after container dies
