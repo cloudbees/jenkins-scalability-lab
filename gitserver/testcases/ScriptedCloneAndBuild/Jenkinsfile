@@ -1,6 +1,6 @@
 node {
 
-    withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
+    // withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
         stage ('Sanity Check') {
             echo "Where is maven?"
@@ -14,14 +14,16 @@ node {
         }
         
         stage('Build it') {
-            sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
-            // sh "mvn -Dmaven.test.failure.ignore clean package"
+            // Old, fancy way
+            // sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+            // New, simple way
+            sh "mvn -Dmaven.test.failure.ignore clean package"
         }
         
         stage('Archive our results') {
             junit '**/target/surefire-reports/TEST-*.xml'
             archive 'target/*.jar'
         }
-    }
+    // } // ends the withEnv block
 
 }
