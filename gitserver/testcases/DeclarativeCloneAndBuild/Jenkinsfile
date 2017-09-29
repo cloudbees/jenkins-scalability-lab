@@ -20,7 +20,7 @@ pipeline {
     post {
         always {
             echo "-- always -- step in post block."
-            deleteDir()
+            // deleteDir()
         }
         success {
             echo "-- success -- step in post block -- HOORAY to things that work!"
