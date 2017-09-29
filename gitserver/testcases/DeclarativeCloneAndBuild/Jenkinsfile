@@ -2,7 +2,10 @@ pipeline {
 
     agent any
 
-    /* tools {
+    /*
+    We're getting rid of this altogether, and instead using 
+    the java that gets installed from the Dockerfile.
+    tools {
         maven 'maven'
         jdk 'jdk8'
     } */
