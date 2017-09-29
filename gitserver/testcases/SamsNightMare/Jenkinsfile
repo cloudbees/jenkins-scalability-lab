@@ -96,19 +96,8 @@ stage ("Unstash the thing we just created") {
 }
 
 node {
-    def mvnHome = tool 'maven'
-    withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
-        
-        stage ('Sanity Check') {
-            echo '--> What is M2_HOME'
-            sh 'echo "M2_HOME: ${M2_HOME}"'
-            echo '--> What is JAVA_HOME'
-            sh 'echo "JAVA_HOME: ${JAVA_HOME}"'
-            echo '--> Where is java?'
-            sh 'which java'
-            echo '--> Build the thing'
-            sh "mvn -X clean package"
-        }
+    // def mvnHome = tool 'maven'
+    // withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
         stage('Check out') { 
             git (credentialsId: "git-ssh", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
@@ -127,7 +116,7 @@ node {
             junit '**/target/surefire-reports/TEST-*.xml'
             archive 'target/*.jar'
         }
-    }
+    // } // this ends our would-be withEnv block.
 }
 
 // Read that file that we just stashed into agent-3

@@ -1,5 +1,7 @@
 node {
 
+    // TODO:
+    // Figure out why the Global Tools stuff refuses to work.
     // withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
         
         stage ('Sanity Check') {
@@ -14,9 +16,9 @@ node {
         }
         
         stage('Build it') {
-            // Old, fancy way
-            // sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
-            // New, simple way
+            // Old, fancy way which never worked:
+            //   sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+            // New, simple way whih works fine:
             sh "mvn -Dmaven.test.failure.ignore clean package"
         }
         
