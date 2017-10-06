@@ -23,7 +23,7 @@ Testbed for measuring scalability of Jenkins.
 * (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 
-##Git Server: testcases, shared libraries and testcase data
+## Git Server: testcases, shared libraries and testcase data
 
 * The git server is automatically populated with testcases from gitserver/testcases
     - Each subfolder of 'testcases' becomes a testcase branch in the repo when you build the container
@@ -81,7 +81,7 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 
 # Troubleshooting
 * **Problem:** Basic issues i.e. something broke
-    - **Solution:** run the shutdown script, run `docker rm volume jenkins_home`, and run the build-local.sh script again
+    - **Solution:** run the shutdown script, run `docker volume rm jenkins_home`, and run the build-local.sh script again
 * **Problem:** Error fetching plugin
     - **Solution:** Look up the plugin in the Jenkins wiki and see if it was just released (may not be fully available yet) - if so, you can hardcode a plugins.txt dependency on the previous version to work around this. 
 * **Problem** Halp, I get an error along the lines of:
