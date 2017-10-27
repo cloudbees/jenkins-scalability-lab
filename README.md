@@ -2,6 +2,7 @@
 Testbed for measuring scalability of Jenkins.
 
 # Usage
+* For custom testcases, at the moment you may wish to create branches for your scenarios
 * To build everything and bring up the environmeent, go to the 'local' folder and run `./build-local.sh`
 * To shut all of the environment down and kill containers, run `./shutdown.sh` from this location (one level up from 'local')
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs, but you can clear configuration with `docker volume rm jenkins_home`
@@ -22,6 +23,7 @@ Testbed for measuring scalability of Jenkins.
     - Note that **No dependency resolution is done, so your plugins.txt file must include dependencies!**  This can be easier by using a plugins.txt entry for the previous release of the plugin, and then have the custom plugins replace that.
 * (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
+* You can customize the initial setup of the master by modifying jenkins/loadtestsetup.groovy, for example to modify security setup or add users.  Note that **you must make the Groovy commands idempotent, because this will run every time you start the Docker image baked from it.**
 
 ## Git Server: testcases, shared libraries and testcase data
 
