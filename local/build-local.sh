@@ -72,7 +72,8 @@ docker run --rm -d --network scalability-bridge \
 
 # Run jenkins, specifying a named volume makes it persistent even after container dies
 # "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
-docker run --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
+# Cap add for sys ptrace is for syscall info
+docker run --cap-add=SYS_PTRACE --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
   -p 8080:8080 -p 9011:9011 \
   -v jenkins_home:/var/jenkins_home \
   --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
