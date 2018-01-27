@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage ('Build It') {
             steps {
-                git (credentialsId: "git-ssh", url: "ssh://git@gitserver/git-server/repos/simple-maven-project-with-tests.git")
+                git (credentialsId: "git-ssh", url: "ssh://git@gitserver:2222/git-server/repos/simple-maven-project-with-tests.git")
                 echo '--> Build the thing'
                 sh "mvn -X clean package"
             }
