@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Setup
-sudo yum install -y docker && sudo service docker start
+sudo yum install -y docker && sudo service docker start && sudo su
 
 # Launch the influx instance
 docker run -d --rm -h influx --name influx \

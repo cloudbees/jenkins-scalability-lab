@@ -6,7 +6,7 @@
     - Uses only a few GB of disk space
 * Jenkins basic - c5.xlarge (4 core, 8 GB RAM)
     - Volume determines storage perf
-* Swarm workers
+* Swarm workers - probably need public IPs, terminate on stop
 
 #Setup:
 * 'sudo yum install -y docker && sudo service docker start && sudo su' 
