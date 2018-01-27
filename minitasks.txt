@@ -1,6 +1,9 @@
 Jenkins versions: https://hub.docker.com/r/jenkinsci/jenkins/tags/
 Graphite container: https://github.com/hopsoft/docker-graphite-statsd
 
+# AWS minitasks
+- Set up gitserver to use port 2222 for Jenkins (local and remote)
+- Fix the SSH key dissemination to gitserver
 
 # Minitasks
 X Jenkins server, with plugins.txt and jenkins-home
