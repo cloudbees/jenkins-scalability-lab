@@ -15,4 +15,4 @@ docker run --rm -d -p 2222:22 \
    -h gitserver \
    --name gitserver -l role=gitserver \
    -v "/tmp/keys:/git-server/keys" \
-   svanoort/hydra-gitserver:1.0
+   svanoort/hydra-gitserver:remote
