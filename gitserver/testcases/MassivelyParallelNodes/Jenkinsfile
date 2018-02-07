@@ -12,20 +12,16 @@ def doNotify(msg) {
     sh "echo ${msg}"
 }
 
-node {
-    ws {}
-    def x = [:]
-    for (def i=0; i<127; i++) {
-        def j = i;
-        // TODO JENKINS-25979 x["branch${i}"] = {…} does not work
-        x.put("branch${i}", { 
-            node {
-              ws{}
-              notify("Hello ${j}")
-            }
-          }
-        )
-    }
-
-    parallel(x)
+def x = [:]
+for (def i=0; i<127; i++) {
+    def j = i;
+    // TODO JENKINS-25979 x["branch${i}"] = {…} does not work
+    x.put("branch${i}", { 
+        node {
+          notify("Hello ${j}")
+        }
+      }
+    )
 }
+
+parallel(x)
