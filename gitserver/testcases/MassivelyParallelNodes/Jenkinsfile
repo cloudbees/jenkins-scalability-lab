@@ -1,0 +1,27 @@
+// Strains a combination of parallels, node acquisition, and durable task steps
+// See: https://issues.jenkins-ci.org/browse/JENKINS-47724
+// See also: https://issues.jenkins-ci.org/browse/JENKINS-45553
+// This combination is known to be a problem for scale-out of pipelines with many branches
+
+def notify(msg) {
+    doNotify msg
+    doNotify "${msg} 2"
+    doNotify "${msg} 3"
+}
+def doNotify(msg) {
+    sh "echo ${msg}"
+}
+
+def x = [:]
+for (def i=0; i<127; i++) {
+    def j = i;
+    // TODO JENKINS-25979 x["branch${i}"] = {…} does not work
+    x.put("branch${i}", { 
+        node {
+          notify("Hello ${j}")
+        }
+      }
+    )
+}
+
+parallel(x)

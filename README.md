@@ -105,3 +105,17 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 * Doesn't automate the configuration (currently it requires manually tickling some files and folders)
 * Requires a Debian-based Jenkins Docker image (not Alpine) due to Telegraf installation - perhaps fixable with direct binary install via [the releases](https://portal.influxdata.com/downloads)
 * Requires fairly modern Jenkins core and plugins to run
+
+# Special Uses
+
+## Run a non-containerized Jenkins and the rest in containers, for profiler use
+1. Launch swarm agents specially so they can speak to your local Jenkins: 
+
+```shell
+docker run --rm -d \
+  -l role=agent  \
+  -e "COMMAND_OPTIONS=-master http://$HOSTNAME:8080 -executors 1 -description swarm-slave" \
+  temp-buildagent:1.0
+```
+2. Revise git server container URLs to point to localhost:2222 rather than gitserver:22  -- just on Jenkins within the Pipeline shared libraries (configure Jenkins) + Multibranch Project config
+3. On Jenkins global configuration, change the Graphite server to point at your computer's hostname rather than 'influx' (the ports will map correctly)
