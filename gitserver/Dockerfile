@@ -1,6 +1,7 @@
 # ARG REPO_ROOT=testcases
 # TODO add a REPO_FROM_GIT to pull repo from a gitserver
 FROM jkarlos/git-server-docker
+COPY sshd_config /etc/ssh/sshd_config
 COPY keys /git-server/keys
 COPY testcases /git-server/repo-source
 COPY shared-libs /git-server/shared-libs

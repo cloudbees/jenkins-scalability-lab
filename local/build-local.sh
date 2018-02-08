@@ -32,7 +32,7 @@ ROOT_BLKDEV="/dev/$ROOT_BLKDEV_NAME"
 echo "BLOCK DEVICE ID IS $ROOT_BLKDEV"
 
 # Start git server, see keys from https://github.com/jkarlosb/git-server-docker
-docker run --rm -d -p 2222:22 \
+docker run --rm -d -p 2222:2222 \
    --network scalability-bridge \
    -h gitserver \
    --name gitserver -l role=gitserver \

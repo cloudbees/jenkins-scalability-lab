@@ -11,7 +11,7 @@ docker run -d --rm -h influx --name influx \
  -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
 
  # Git server
-docker run --rm -d -p 2222:22 \
+docker run --rm -d -p 2222:2222 \
    -h gitserver \
    --name gitserver -l role=gitserver \
    -v "/tmp/keys:/git-server/keys" \
