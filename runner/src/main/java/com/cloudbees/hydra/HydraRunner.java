@@ -12,9 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -69,26 +72,47 @@ public class HydraRunner {
         long rampUpMills;
         long testDurationMillis;
 
+        Pattern VALID_NAMES = Pattern.compile("[0-9a-zA-Z_\\- /]+");
+
         public long getTotalDurationMillis() {
             return rampUpMills+testDurationMillis;
+        }
+
+        void validate() throws Exception {
+            if (!VALID_NAMES.matcher(jobName).matches()) {
+                throw new IllegalArgumentException("Job name: "+jobName+" invalid, illegal character!");
+            }
+
         }
     }
 
     static final Predicate<String> FILLED_STRING = x-> {return x!=null && !x.isEmpty();};
 
+    /** Convenience method to UrlEncode as UTF8 */
+    static String enc(@Nonnull String toUrlEncode) {
+        try {
+            return URLEncoder.encode(toUrlEncode, "UTF-8");
+        } catch (UnsupportedEncodingException uee){
+            // always provided out of box
+            return "";
+        }
+    }
+
     public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull String[] tags) throws Exception {
-        URL full = new URL(serverPath, new StringBuilder("write?db=").append(dbName).append("&precision=s").toString());
+        URL full = new URL(serverPath, new StringBuilder("write?db=").append(enc(dbName)).append("&precision=s").toString());
         HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
         conn.setRequestMethod("POST");
         long timestampSec = System.currentTimeMillis()/1000;
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoOutput(true);
-        StringBuilder content = new StringBuilder("events title=\"").append(title).append("\",text=\"").append(text).append("\",tags=\"");
+        StringBuilder content = new StringBuilder("events title=\"")
+                .append(enc(title)).append("\",text=\"")
+                .append(enc(text)).append("\",tags=\"");
 
         // Add tags if present
         if (tags != null && tags.length > 0 && Arrays.stream(tags).filter(FILLED_STRING).findFirst().isPresent()) {
             String tagString = Arrays.stream(tags).filter(FILLED_STRING).collect(Collectors.joining(","));
-            content.append(tagString);
+            content.append(enc(tagString));
         }
 
         content.append("\" ").append(timestampSec);
@@ -109,7 +133,7 @@ public class HydraRunner {
     }
 
     public static void toggleLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull String generatorName) throws Exception {
-        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/toggleNamedGenerator?shortName=").append(generatorName).toString());
+        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/toggleNamedGenerator?shortName=").append(enc(generatorName)).toString());
         HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
         conn.setRequestMethod("POST");
         conn.connect();
@@ -177,6 +201,8 @@ public class HydraRunner {
     /** Parses a single test line, with fields delimited by '|' or null if a comment line starting with '#' */
     @CheckForNull
     private static TestConfig parseTestLine(@Nonnull String testLine) throws Exception {
+        // TODO validate names are valid, etc
+
         String handled = testLine.trim();
         if (handled.startsWith("#")) {
             return null;  // Comment line
@@ -191,6 +217,7 @@ public class HydraRunner {
         cfg.maxConcurrency = Integer.parseInt(sections[2]);
         cfg.rampUpMills = Long.parseLong(sections[3]);
         cfg.testDurationMillis = Long.parseLong(sections[4]);
+        cfg.validate();
         return cfg;
     }
 
