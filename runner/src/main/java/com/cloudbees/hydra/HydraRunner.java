@@ -6,17 +6,24 @@ import org.kohsuke.args4j.Option;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -66,11 +73,36 @@ public class HydraRunner {
         }
     }
 
+    static final Predicate<String> FILLED_STRING = x-> {return x!=null && !x.isEmpty();};
 
     public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull String[] tags) throws Exception {
         URL full = new URL(serverPath, new StringBuilder("write?db=").append(dbName).append("&precision=s").toString());
         HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
         conn.setRequestMethod("POST");
+        long timestampSec = System.currentTimeMillis()/1000;
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setDoOutput(true);
+        StringBuilder content = new StringBuilder("events title=\"").append(title).append("\",text=\"").append(text).append("\",tags=\"");
+
+        // Add tags if present
+        if (tags != null && tags.length > 0 && Arrays.stream(tags).filter(FILLED_STRING).findFirst().isPresent()) {
+            String tagString = Arrays.stream(tags).filter(FILLED_STRING).collect(Collectors.joining(","));
+            content.append(tagString);
+        }
+
+        content.append("\" ").append(timestampSec);
+
+        OutputStream strm = conn.getOutputStream();
+        strm.write(content.toString().getBytes("UTF-8"));
+        strm.close();
+        int code = conn.getResponseCode();
+        if (code != 200 && code != 204) {
+            System.err.println();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            System.err.println();
+            throw new IOException("Request failed!");
+        }
     }
 
     /** Create load generator and return its name */
