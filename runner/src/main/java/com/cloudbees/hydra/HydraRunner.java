@@ -6,18 +6,19 @@ import org.kohsuke.args4j.Option;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -96,12 +97,9 @@ public class HydraRunner {
         strm.write(content.toString().getBytes("UTF-8"));
         strm.close();
         int code = conn.getResponseCode();
+        conn.disconnect();
         if (code != 200 && code != 204) {
-            System.err.println();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            System.err.println();
-            throw new IOException("Request failed!");
+            throw new IOException("Request failed, with response code: "+code);
         }
     }
 
@@ -110,19 +108,64 @@ public class HydraRunner {
         return "";
     }
 
-    public void startLoadGenerator(@Nonnull String generatorName) throws Exception {
-
+    public static void toggleLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull String generatorName) throws Exception {
+        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/toggleNamedGenerator?shortName=").append(generatorName).toString());
+        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
+        conn.setRequestMethod("POST");
+        conn.connect();
+        int code = conn.getResponseCode();
+        conn.disconnect();
+        if (code != 302) {
+            throw new IOException("Request failed, response code: "+code);
+        }
     }
 
-    public void stopLoadGenerator(@Nonnull String generatorName) throws Exception {
-
+    public static void toggleAutostart(@Nonnull URL jenkinsBase) throws Exception {
+        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/autostart?autostartState=true").toString());
+        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
+        conn.setRequestMethod("POST");
+        conn.connect();
+        int code = conn.getResponseCode();
+        conn.disconnect();
+        if (code > 302) {
+            throw new IOException("Request failed, response code: "+code);
+        }
     }
 
-    public void grabSupportBundle() throws Exception {
-
+    /** Simple generic stream copy */
+    static void copyBytes(InputStream inStream, OutputStream outStream) throws IOException {
+        byte[] buf = new byte[8192];
+        while (true) {
+            int r = inStream.read(buf);
+            if (r == -1) {
+                break;
+            }
+            outStream.write(buf, 0, r);
+        }
     }
 
-    public void grabInfluxDump() throws Exception {
+    public static void grabSupportBundle(@Nonnull URL jenkinsBase, @Nonnull String filePath) throws Exception {
+        // Doesn't appear to work readily via HTTP request?
+        /*URL full = new URL(jenkinsBase, "/support/generateAllBundles");
+        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        OutputStream os = conn.getOutputStream();
+        // TODO figure out how to generate the form data for the support bundle request... then it's just
+        os.close();
+
+        int code = conn.getResponseCode();
+        if (code > 400) {
+            throw new IOException("Failed to retrieve support bundle, response code: "+code);
+        }
+        try (InputStream is = new BufferedInputStream(conn.getInputStream())) {
+            try (OutputStream fileOut = Files.newOutputStream(new File(filePath).toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);) {
+                copyBytes(is, fileOut);
+            }
+        }*/
+    }
+
+    public static void grabInfluxDump(@Nonnull URL influxBase, @Nonnull String outputFile) throws Exception {
         // TODO implement me
     }
 
@@ -164,21 +207,22 @@ public class HydraRunner {
 
         TestConfig last = tests.get(tests.size()-1);
 
+        toggleAutostart(config.getJenkinsUrl());
         for (TestConfig tc : tests) {
             runner.logResult(String.format("STARTING test '%s' and it will run for %d ms", tc.testName, tc.getTotalDurationMillis()));
             HydraRunner.sendInfluxEvent(config.getinfluxUrl(), "hydra", "Starting testcase "+tc.testName, "", null);
-            runner.startLoadGenerator(testToGenerator.get(tc));
+            runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             Thread.sleep(tc.getTotalDurationMillis());
             runner.logResult(String.format("ENDING test '%s' and entering cooldown period of %d ms", tc.testName, config.millisBetweenTests));
-            runner.stopLoadGenerator(testToGenerator.get(tc));
+            runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             HydraRunner.sendInfluxEvent(config.getinfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
             }
         }
 
-        runner.grabInfluxDump();
-        runner.grabSupportBundle();
+        runner.grabInfluxDump(config.getinfluxUrl(), "influxDump.zip");
+        runner.grabSupportBundle(config.getJenkinsUrl(), "support.zip");
     }
 
     static RunnerConfig parseConfigFromCmdline() {
