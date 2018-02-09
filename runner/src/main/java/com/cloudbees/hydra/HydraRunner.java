@@ -99,19 +99,29 @@ public class HydraRunner {
         System.out.println(msg);
     }
 
-    /** Parses a single testline of CSV */
-    @Nonnull
+    /** Parses a single test line, with fields delimited by '|' or null if a comment line starting with '#' */
+    @CheckForNull
     private static TestConfig parseTestLine(@Nonnull String testLine) throws Exception {
+        String handled = testLine.trim();
+        if (handled.startsWith("#")) {
+            return null;  // Comment line
+        }
+        String[] sections = handled.split("|");
+        if (sections.length != 5) {
+            throw new Exception("Invalid test format line, expected 5 fields delimited by '|' and found "+sections.length);
+        }
         TestConfig cfg = new TestConfig();
-        // Parses a line of tests
+        cfg.testName = sections[0];
+        cfg.jobName = sections[1];
+        cfg.maxConcurrency = Integer.parseInt(sections[2]);
+        cfg.rampUpMills = Long.parseLong(sections[3]);
+        cfg.testDurationMillis = Long.parseLong(sections[4]);
         return cfg;
     }
 
     static void runTests(@Nonnull RunnerConfig config, @Nonnull List<TestConfig> tests) throws Exception {
         HydraRunner runner = new HydraRunner();
         Map<TestConfig, String> testToGenerator = new HashMap<TestConfig, String>();
-
-        // TODO connection check for Jenkins and Influx
 
         runner.logResult("Beginning to create generators");
         for (TestConfig tc : tests) {
@@ -155,7 +165,7 @@ public class HydraRunner {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-        }).collect(Collectors.toList());
+        }).filter(x -> x!=null).collect(Collectors.toList());
 
         return config;
     }
@@ -166,6 +176,7 @@ public class HydraRunner {
     public static void main( String[] args ) throws Exception {
         RunnerConfig cfg = new RunnerConfig();
         CmdLineParser parser = new CmdLineParser(cfg);
+
         try {
             parser.parseArgument(args);
         } catch (CmdLineException cle) {
@@ -175,7 +186,19 @@ public class HydraRunner {
             parser.printUsage(System.err);
             System.err.println();
             System.err.println("  Example: java SampleMain"+parser.printExample(org.kohsuke.args4j.ExampleMode.ALL));
+            System.exit(1);
         }
 
+        // TODO connection check for Jenkins and Influx
+
+        List<TestConfig> tests;
+        try {
+            String testsPath = cfg.testsPath;
+            tests = parseTests(new File(testsPath));
+        } catch (Exception ex) {
+            throw new Exception("Error reading test file!", ex);
+        }
+
+        runTests(cfg, tests);
     }
 }
