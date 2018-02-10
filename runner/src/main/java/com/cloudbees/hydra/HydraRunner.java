@@ -41,7 +41,7 @@ public class HydraRunner {
         @Option(name="-w", usage = "Milliseconds to wait between tests")
         long millisBetweenTests = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
 
-        @Option(name="-tests", usage="Path to tests file", required = true)
+        @Option(name="-t", aliases = {"--tests"}, usage="Path to tests file", required = true)
         String testsPath;
 
         public URL getJenkinsUrl() {
@@ -76,7 +76,7 @@ public class HydraRunner {
         long rampUpMills;
         long testDurationMillis;
 
-        Pattern VALID_NAMES = Pattern.compile("[0-9a-zA-Z_\\- /]+");
+        static Pattern VALID_NAMES = Pattern.compile("[0-9a-zA-Z_\\- /]+");
 
         public long getTotalDurationMillis() {
             return rampUpMills+testDurationMillis;
@@ -223,16 +223,16 @@ public class HydraRunner {
         if (handled.startsWith("#")) {
             return null;  // Comment line
         }
-        String[] sections = handled.split("|");
+        String[] sections = handled.split("\\|");
         if (sections.length != 5) {
             throw new Exception("Invalid test format line, expected 5 fields delimited by '|' and found "+sections.length);
         }
         TestConfig cfg = new TestConfig();
-        cfg.testName = sections[0];
-        cfg.jobName = sections[1];
-        cfg.maxConcurrency = Integer.parseInt(sections[2]);
-        cfg.rampUpMills = Long.parseLong(sections[3]);
-        cfg.testDurationMillis = Long.parseLong(sections[4]);
+        cfg.testName = sections[0].trim();
+        cfg.jobName = sections[1].trim();
+        cfg.maxConcurrency = Integer.parseInt(sections[2].trim());
+        cfg.rampUpMills = Long.parseLong(sections[3].trim());
+        cfg.testDurationMillis = Long.parseLong(sections[4].trim());
         cfg.validate();
         return cfg;
     }
