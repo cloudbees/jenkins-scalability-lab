@@ -6,8 +6,6 @@ import org.kohsuke.args4j.Option;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +17,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -50,18 +46,26 @@ public class HydraRunner {
 
         public URL getJenkinsUrl() {
             try {
-                return new URL(jenkinsAddress);
+                return hostAndPortToUrl(jenkinsAddress);
             } catch (MalformedURLException mue) {
                 throw new RuntimeException(mue);
             }
         }
 
-        public URL getinfluxUrl() {
+        public URL getInfluxUrl() {
             try {
-                return new URL(influxAddress);
+                return hostAndPortToUrl(influxAddress);
             } catch (MalformedURLException mue) {
                 throw new RuntimeException(mue);
             }
+        }
+    }
+
+    static URL hostAndPortToUrl(String hostAndPort) throws MalformedURLException {
+        if (hostAndPort.startsWith("http://")) {
+            return new URL(hostAndPort);
+        } else {
+            return new URL("http://"+hostAndPort);
         }
     }
 
@@ -189,7 +193,7 @@ public class HydraRunner {
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
         OutputStream os = conn.getOutputStream();
-        // TODO figure out how to generate the form data for the support bundle request... then it's just
+        // TODO figure out how to generate the form data for the support bundle request... then it's just plug that in as a body
         os.close();
 
         int code = conn.getResponseCode();
@@ -204,7 +208,7 @@ public class HydraRunner {
     }
 
     public static void grabInfluxDump(@Nonnull URL influxBase, @Nonnull String outputFile) throws Exception {
-        // TODO implement me
+        // TODO implement me if we can figure out how to do it without custom shellscript?
     }
 
     /** Centralized to allow logging redirects eventually */
@@ -215,8 +219,6 @@ public class HydraRunner {
     /** Parses a single test line, with fields delimited by '|' or null if a comment line starting with '#' */
     @CheckForNull
     private static TestConfig parseTestLine(@Nonnull String testLine) throws Exception {
-        // TODO validate names are valid, etc
-
         String handled = testLine.trim();
         if (handled.startsWith("#")) {
             return null;  // Comment line
@@ -235,8 +237,10 @@ public class HydraRunner {
         return cfg;
     }
 
+    /** Attempt to sanitize test name into a valid-ish generator name */
     static String testNameToGeneratorName(@Nonnull String testName) {
-        return testName;
+        String output = testName.replaceAll("[.?*/\\\\%!@#$^&|<>\\[\\]:; ]+", "_");
+        return output;
     }
 
     static void runTests(@Nonnull RunnerConfig config, @Nonnull List<TestConfig> tests) throws Exception {
@@ -256,25 +260,19 @@ public class HydraRunner {
         toggleAutostart(config.getJenkinsUrl());
         for (TestConfig tc : tests) {
             runner.logResult(String.format("STARTING test '%s' and it will run for %d ms", tc.testName, tc.getTotalDurationMillis()));
-            HydraRunner.sendInfluxEvent(config.getinfluxUrl(), "hydra", "Starting testcase "+tc.testName, "", null);
+            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Starting testcase "+tc.testName, "", null);
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             Thread.sleep(tc.getTotalDurationMillis());
             runner.logResult(String.format("ENDING test '%s' and entering cooldown period of %d ms", tc.testName, config.millisBetweenTests));
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
-            HydraRunner.sendInfluxEvent(config.getinfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
+            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
             }
         }
 
-        runner.grabInfluxDump(config.getinfluxUrl(), "influxDump.zip");
+        runner.grabInfluxDump(config.getInfluxUrl(), "influxDump.zip");
         runner.grabSupportBundle(config.getJenkinsUrl(), "support.zip");
-    }
-
-    static RunnerConfig parseConfigFromCmdline() {
-        RunnerConfig output = new RunnerConfig();
-
-        return output;
     }
 
     /** Simple test parsing, one test per line */
@@ -290,6 +288,20 @@ public class HydraRunner {
         }).filter(x -> x!=null).collect(Collectors.toList());
 
         return config;
+    }
+
+    /** Verifies we can connect to the URL and prints failure info to stdOut */
+    static boolean connectionCheck(URL urlToCheck, String urlDescription) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) (urlToCheck.openConnection());
+            conn.connect();
+            conn.disconnect();
+            return true;
+        } catch (IOException ioe) {
+            System.err.println("Failed to connect to "+urlDescription+" URL:"+urlToCheck.toString());
+            System.err.println("Error: "+ioe.getMessage());
+            return false;
+        }
     }
 
     /** Initial runner impl: read file of tests, plus from cmdline args the jenkinsAddress, influxAddress, time b/w tests
@@ -311,7 +323,13 @@ public class HydraRunner {
             System.exit(1);
         }
 
-        // TODO connection check for Jenkins and Influx
+        // Connection check for Jenkins
+        if (!connectionCheck(cfg.getJenkinsUrl(), "Jenkins address")) {
+            System.exit(1);
+        }
+        if (!connectionCheck(cfg.getInfluxUrl(), "InfluxDB address")) {
+            System.exit(1);
+        }
 
         List<TestConfig> tests;
         try {
