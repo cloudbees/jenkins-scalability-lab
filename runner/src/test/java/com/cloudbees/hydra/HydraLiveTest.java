@@ -18,8 +18,9 @@ public class HydraLiveTest {
     }
 
     @Test
-    public void toggleJenkinsGenerator() throws Exception {
-        // TODO create the generator
-        HydraRunner.toggleLoadGenerator(new URL("http://"+JENKINS_HOST_AND_PORT), "sample");
+    public void createAndToggleJenkinsGenerator() throws Exception {
+        String jenkinsBase = "http://"+JENKINS_HOST_AND_PORT;
+        HydraRunner.createLinearLoadGenerator(new URL(jenkinsBase), "sample", "none", 1, 1000);
+        HydraRunner.toggleLoadGenerator(new URL(jenkinsBase), "sample");
     }
 }

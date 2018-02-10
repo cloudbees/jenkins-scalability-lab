@@ -128,8 +128,22 @@ public class HydraRunner {
     }
 
     /** Create load generator and return its name */
-    public String createLinearLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull  String generatorName, @Nonnull String jobFullName, int concurrentJobs, long rampUpMillis) {
-        return "";
+    public static void createLinearLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull  String generatorName, @Nonnull String jobFullName, int concurrentJobs, long rampUpMillis) throws Exception {
+        StringBuilder suffix = new StringBuilder("/loadgenerator/addLinearRampupGenerator?shortName=")
+                .append(enc(generatorName))
+                .append("&jobName=").append(enc(jobFullName))
+                .append("&maxConcurrency=").append(concurrentJobs)
+                .append("&rampUpMillis=").append(rampUpMillis);
+
+        URL full = new URL(jenkinsBase, suffix.toString());
+        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
+        conn.setRequestMethod("POST");
+        conn.connect();
+        int code = conn.getResponseCode();
+        conn.disconnect();
+        if (code > 200) {
+            throw new IOException("Request failed, response code: "+code);
+        }
     }
 
     public static void toggleLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull String generatorName) throws Exception {
@@ -221,14 +235,19 @@ public class HydraRunner {
         return cfg;
     }
 
+    static String testNameToGeneratorName(@Nonnull String testName) {
+        return testName;
+    }
+
     static void runTests(@Nonnull RunnerConfig config, @Nonnull List<TestConfig> tests) throws Exception {
         HydraRunner runner = new HydraRunner();
         Map<TestConfig, String> testToGenerator = new HashMap<TestConfig, String>();
 
         runner.logResult("Beginning to create generators");
         for (TestConfig tc : tests) {
-            String gen = runner.createLinearLoadGenerator(config.getJenkinsUrl(), tc.testName, tc.jobName, tc.maxConcurrency, tc.rampUpMills);
-            testToGenerator.put(tc, gen);
+            String name = testNameToGeneratorName(tc.testName);
+            runner.createLinearLoadGenerator(config.getJenkinsUrl(), tc.testName, tc.jobName, tc.maxConcurrency, tc.rampUpMills);
+            testToGenerator.put(tc, name);
         }
         runner.logResult("Done creating generators, beginning test runs");
 
