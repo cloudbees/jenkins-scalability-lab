@@ -1,5 +1,9 @@
 package com.cloudbees.hydra;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -11,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -104,30 +108,26 @@ public class HydraRunner {
 
     public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull String[] tags) throws Exception {
         URL full = new URL(serverPath, new StringBuilder("write?db=").append(enc(dbName)).append("&precision=s").toString());
-        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
-        conn.setRequestMethod("POST");
         long timestampSec = System.currentTimeMillis()/1000;
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setDoOutput(true);
         StringBuilder content = new StringBuilder("events title=\"")
                 .append(enc(title)).append("\",text=\"")
                 .append(enc(text)).append("\",tags=\"");
-
         // Add tags if present
         if (tags != null && tags.length > 0 && Arrays.stream(tags).filter(FILLED_STRING).findFirst().isPresent()) {
             String tagString = Arrays.stream(tags).filter(FILLED_STRING).collect(Collectors.joining(","));
             content.append(enc(tagString));
         }
-
         content.append("\" ").append(timestampSec);
 
-        OutputStream strm = conn.getOutputStream();
-        strm.write(content.toString().getBytes("UTF-8"));
-        strm.close();
-        int code = conn.getResponseCode();
-        conn.disconnect();
+        HttpResponse resp = Request.Post(full.toURI()).bodyString(content.toString(), ContentType.APPLICATION_FORM_URLENCODED).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
+
         if (code != 200 && code != 204) {
-            throw new IOException("Request failed, with response code: "+code);
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
+            throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
         }
     }
 
@@ -140,37 +140,42 @@ public class HydraRunner {
                 .append("&rampUpMillis=").append(rampUpMillis);
 
         URL full = new URL(jenkinsBase, suffix.toString());
-        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
-        conn.setRequestMethod("POST");
-        conn.connect();
-        int code = conn.getResponseCode();
-        conn.disconnect();
-        if (code > 200) {
+        HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
+
+        if (code != 302) {
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
         }
     }
 
     public static void toggleLoadGenerator(@Nonnull URL jenkinsBase, @Nonnull String generatorName) throws Exception {
         URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/toggleNamedGenerator?shortName=").append(enc(generatorName)).toString());
-        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
-        conn.setRequestMethod("POST");
-        conn.connect();
-        int code = conn.getResponseCode();
-        conn.disconnect();
+        HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
+
         if (code != 302) {
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
         }
     }
 
     public static void toggleAutostart(@Nonnull URL jenkinsBase) throws Exception {
         URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/autostart?autostartState=true").toString());
-        HttpURLConnection conn = (HttpURLConnection)(full.openConnection());
-        conn.setRequestMethod("POST");
-        conn.connect();
-        int code = conn.getResponseCode();
-        conn.disconnect();
+        HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
         if (code > 302) {
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
         }
     }
 
@@ -212,8 +217,12 @@ public class HydraRunner {
     }
 
     /** Centralized to allow logging redirects eventually */
-    void logResult(String msg) {
+    static void logResult(String msg) {
         System.out.println(msg);
+    }
+
+    static void logError(String msg) {
+        System.err.println(msg);
     }
 
     /** Parses a single test line, with fields delimited by '|' or null if a comment line starting with '#' */
@@ -291,15 +300,17 @@ public class HydraRunner {
     }
 
     /** Verifies we can connect to the URL and prints failure info to stdOut */
-    static boolean connectionCheck(URL urlToCheck, String urlDescription) {
+    static boolean connectionCheck(@Nonnull URL urlToCheck, @Nonnull String urlDescription) {
         try {
-            HttpURLConnection conn = (HttpURLConnection) (urlToCheck.openConnection());
-            conn.connect();
-            conn.disconnect();
+            int respLen = Request.Get(urlToCheck.toURI()).execute().returnContent().asBytes().length;
+            if (respLen == 0) {
+                logError("Zero-length response from "+urlDescription+" URL: "+urlToCheck.toString());
+                return false;
+            }
             return true;
-        } catch (IOException ioe) {
-            System.err.println("Failed to connect to "+urlDescription+" URL:"+urlToCheck.toString());
-            System.err.println("Error: "+ioe.getMessage());
+        } catch (URISyntaxException|IOException ioe) {
+            logError("Failed to connect to "+urlDescription+" URL: "+urlToCheck.toString());
+            logError("Error: "+ioe.getMessage());
             return false;
         }
     }
@@ -324,12 +335,14 @@ public class HydraRunner {
         }
 
         // Connection check for Jenkins
+        // FIXME: log HTTP errors out, by using proper Apache Commons lib
         if (!connectionCheck(cfg.getJenkinsUrl(), "Jenkins address")) {
             System.exit(1);
         }
-        if (!connectionCheck(cfg.getInfluxUrl(), "InfluxDB address")) {
+        // TODO direct influx query
+        /*if (!connectionCheck(cfg.getInfluxUrl(), "InfluxDB address")) {
             System.exit(1);
-        }
+        }*/
 
         List<TestConfig> tests;
         try {
