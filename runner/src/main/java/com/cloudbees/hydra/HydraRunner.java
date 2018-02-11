@@ -83,7 +83,7 @@ public class HydraRunner {
         static Pattern VALID_NAMES = Pattern.compile("[0-9a-zA-Z_\\- /]+");
 
         public long getTotalDurationMillis() {
-            return rampUpMills+testDurationMillis;
+            return Math.max(0,rampUpMills)+testDurationMillis;
         }
 
         void validate() throws Exception {
@@ -109,9 +109,10 @@ public class HydraRunner {
     public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull String[] tags) throws Exception {
         URL full = new URL(serverPath, new StringBuilder("write?db=").append(enc(dbName)).append("&precision=s").toString());
         long timestampSec = System.currentTimeMillis()/1000;
+        // TODO figure out how to escape quotes in the InfluxDB event format
         StringBuilder content = new StringBuilder("events title=\"")
-                .append(enc(title)).append("\",text=\"")
-                .append(enc(text)).append("\",tags=\"");
+                .append(title).append("\",text=\"")
+                .append(text).append("\",tags=\"");
         // Add tags if present
         if (tags != null && tags.length > 0 && Arrays.stream(tags).filter(FILLED_STRING).findFirst().isPresent()) {
             String tagString = Arrays.stream(tags).filter(FILLED_STRING).collect(Collectors.joining(","));
@@ -143,7 +144,7 @@ public class HydraRunner {
         HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
         int code = resp.getStatusLine().getStatusCode();
 
-        if (code != 302) {
+        if (code >= 300) {
             logError("Failed request to "+full.toString());
             resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
@@ -259,7 +260,8 @@ public class HydraRunner {
         runner.logResult("Beginning to create generators");
         for (TestConfig tc : tests) {
             String name = testNameToGeneratorName(tc.testName);
-            runner.createLinearLoadGenerator(config.getJenkinsUrl(), tc.testName, tc.jobName, tc.maxConcurrency, tc.rampUpMills);
+            logResult("Creating generator: "+name);
+            runner.createLinearLoadGenerator(config.getJenkinsUrl(), name, tc.jobName, tc.maxConcurrency, tc.rampUpMills);
             testToGenerator.put(tc, name);
         }
         runner.logResult("Done creating generators, beginning test runs");
@@ -274,6 +276,7 @@ public class HydraRunner {
             Thread.sleep(tc.getTotalDurationMillis());
             runner.logResult(String.format("ENDING test '%s' and entering cooldown period of %d ms", tc.testName, config.millisBetweenTests));
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
+            // TODO Influx event gets generator or testcase info
             HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
@@ -339,7 +342,7 @@ public class HydraRunner {
         if (!connectionCheck(cfg.getJenkinsUrl(), "Jenkins address")) {
             System.exit(1);
         }
-        // TODO direct influx query
+        // TODO direct influx query needed, can't http request to this address
         /*if (!connectionCheck(cfg.getInfluxUrl(), "InfluxDB address")) {
             System.exit(1);
         }*/
