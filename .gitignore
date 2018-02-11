@@ -12,6 +12,11 @@ node_modules
 *_rsa
 *.pub
 
+# Temp folders for data analysis/viewing
+dump
+influx-viewing
+hydra-metrics*.tar.gz
+
 # Log & etc from java
 *.log
 hs_err_pid*

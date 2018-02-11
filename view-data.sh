@@ -1,31 +1,38 @@
 #!/bin/bash
-# Launches containers to view the data
+# Uses a Hydra Influx DB dump created by 'dump-data.sh' to launch an Influx container with the
+# Database dump loaded + a viewer Grafana container (port 81) for visualization + analysis
 
-# TODO check for data dump argument or local dump
+# Temp dirs used for expanding the DB dump to and for holding the volume data for the loader influx instance
+export BACKUPDIR="$(pwd)/dump"
+export INFLUXDIR="$(pwd)/influx-viewing"
 
-# Create a clean dump dir
-rm -rf ./dump || true
-mkdir dump
+# Clean up dirs and then expand the dump to the dump dir
+rm -rf "$BACKUPDIR" || true
+rm -rf "$INFLUXDIR" || true
+mkdir "$BACKUPDIR"
 tar -xzf *.tar.gz -C ./dump
 
+# Rebuild DB in an ephemeral container with a bind mount to export results
+# Roughly as suggested by https://www.influxdata.com/blog/backuprestore-of-influxdb-fromto-docker-containers/
+docker run -d --rm --name influx-temp \
+    -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" \
+    --entrypoint /bin/bash \
+    -v $INFLUXDIR:/data \
+    -v $BACKUPDIR:/dump \
+    appcelerator/influxdb:influxdb-1.2.2 \
+    -c "influxd restore -metadir /data/meta -datadir /data/db -database hydra /dump/hydra_influx_dump" 
 
-# FIXME: restore needs to run while influxd is not running?!
+# Launches dockerize influx using the bind-mount folder as the data source
 docker run -d --rm -h influx --name influx --network scalability-bridge \
- -p 8083:8083 -p 8086:8086 -p 2015:2015 \
- -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=hydra \
- -e GRAPHITE_DB="hydra" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" \
- -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
+    -p 8083:8083 -p 8086:8086 -p 2015:2015 -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" \
+    -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" \
+    -v $INFLUXDIR:/data \
+    -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
 
-docker cp ./dump influx:/tmp/dump
-docker exec influx influxd restore -metadir /data/meta /tmp/dump/hydra_influx_dump
-docker exec influx influxd restore -database hydra -datadir /data/ /tmp/dump/hydra_influx_dump
-
-# Separate container for graphana 4
-# Ports 81 - grafana, 
+# Launch separate container for graphana viewing
+# Ports 81 - grafana
+# TODO may need to set env var ROOT_BLKDEV_NAME to vda etc
 docker run --rm -d --network scalability-bridge \
-  -e ROOT_BLKDEV_NAME=$ROOT_BLKDEV_NAME \
   -h grafana --name grafana \
   -p 81:3000 \
   temp-grafana:1.0
-
-# FIXME need a way to set time range to match the imported DB in Grafana
