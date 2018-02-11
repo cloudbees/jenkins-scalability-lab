@@ -37,7 +37,22 @@
     }
   ],
   "annotations": {
-    "list": []
+    "list": [
+      {
+        "datasource": "${DS_INFLUX-HYDRA}",
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "limit": 100,
+        "name": "Annotations",
+        "query": "Select title, tags, text from events where $timeFilter",
+        "showIn": 0,
+        "tagsColumn": "tags",
+        "textColumn": "text",
+        "titleColumn": "title",
+        "type": "alert"
+      }
+    ]
   },
   "description": "what it says on the can",
   "editable": true,
@@ -1766,5 +1781,5 @@
   },
   "timezone": "browser",
   "title": "Scalability Lab Core Metrics",
-  "version": 14
+  "version": 15
 }
