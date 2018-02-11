@@ -271,12 +271,18 @@ public class HydraRunner {
         toggleAutostart(config.getJenkinsUrl());
         for (TestConfig tc : tests) {
             runner.logResult(String.format("STARTING test '%s' and it will run for %d ms", tc.testName, tc.getTotalDurationMillis()));
-            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Starting testcase "+tc.testName, "", null);
+
+            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Starting testcase "+tc.testName, "jobName: "+tc.jobName, null);
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             Thread.sleep(tc.getTotalDurationMillis());
-            runner.logResult(String.format("ENDING test '%s' and entering cooldown period of %d ms", tc.testName, config.millisBetweenTests));
+
+            StringBuilder endString = new StringBuilder(String.format("ENDING test '%s' ", tc.testName));
+            if (tc != last) {
+                endString.append(String.format("and entering cooldown period of %d ms", config.millisBetweenTests));
+            }
+            runner.logResult(endString.toString());
+
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
-            // TODO Influx event gets generator or testcase info
             HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
