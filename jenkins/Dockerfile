@@ -2,8 +2,11 @@ FROM jenkinsci/jenkins:2.73.3
 
 MAINTAINER svanoort
 
-# Install telegraf for monitoring
+# Install telegraf for monitoring && set up telegraf as sudoer so they can launch telegraf as root for extra disk stats
 USER root
+RUN apt-get update && apt-get install -y sudo bc \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /var/tmp/* \
+    && echo 'telegraf ALL=(root) NOPASSWD:ALL -nvL *' >> /etc/sudoers 
 RUN curl -o /tmp/telegraf.deb https://dl.influxdata.com/telegraf/releases/telegraf_1.3.5-1_amd64.deb \
     && dpkg -i /tmp/telegraf.deb && rm -f telegraf.deb
 USER jenkins

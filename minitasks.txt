@@ -2,12 +2,15 @@ Jenkins versions: https://hub.docker.com/r/jenkinsci/jenkins/tags/
 Graphite container: https://github.com/hopsoft/docker-graphite-statsd
 
 # AWS minitasks
-- Set up gitserver to use port 2222 for Jenkins (local and remote)
-    - Problem: when running linked in containers, gets port 22 not 2222
-    - Maybe build args?
 - Fix the SSH key dissemination to gitserver (at least for AWS, volume mounts suck)
 - Jenkins: similar way to disseminate SSH key for gitserver, also add a volume mount for keys
-- Update swarm agent to take a volume for workspace -- see vfarcic/jenkins-swarm-agent -- or use this script to use instance store for the workers: https://gist.github.com/kamermans/176c190670a163b1147e
+- Jenkins mount local volume, i.e. EFS
+    + EFS standup basis
+- (BIG): Kubernetes-based standup 
+X Set up gitserver to use port 2222 for Jenkins (local and remote)
+    - Problem: when running linked in containers, gets port 22 not 2222
+    - Maybe build args?
+X Use this script to use instance store for the workers: https://gist.github.com/kamermans/176c190670a163b1147e
 
 # Minitasks
 X Jenkins server, with plugins.txt and jenkins-home
