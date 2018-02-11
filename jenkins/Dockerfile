@@ -30,7 +30,7 @@ ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
 # Basic config - install custom and test framework plugins + custom snapshots
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 COPY minimal-plugins.txt /usr/share/jenkins/ref/minimal-plugins.txt
-RUN mkdir -p /usr/share/jenkins/ref/plugins \
+RUN mkdir -p /usr/share/jenkins/ref/plugins && rm -rf /usr/share/jenkins/ref/plugins/*.lock \
     && echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
     && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
 RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
