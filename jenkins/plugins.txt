@@ -13,6 +13,7 @@ pipeline-stage-tags-metadata:latest
 pipeline-stage-view:latest
 scm-api:latest
 script-security:latest
+structs:latest
 workflow-aggregator:2.5
 workflow-api:latest
 workflow-basic-steps:latest
