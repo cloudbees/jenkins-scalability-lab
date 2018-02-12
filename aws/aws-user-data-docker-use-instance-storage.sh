@@ -37,3 +37,8 @@ mkdir /mnt/docker-volumes/volumes
 ln -s /mnt/docker-volumes/volumes /var/lib/docker/volumes
 
 service docker start
+
+docker run --rm -d \
+  --add-host jenkins:10.0.0.55 --add-host gitserver:10.0.0.13 \
+  -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors $(nproc) -description swarm-slave" \
+  svanoort/jenkins-swarm-agent-mvn:1.0
