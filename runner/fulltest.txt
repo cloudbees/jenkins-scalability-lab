@@ -1,0 +1,11 @@
+# Trivial testcase for standard Hydra
+# format: test name, jobname, max concurrent number to run, ramp up time in ms, testDuration ms
+Simple Steps|testcases/LotsOfEchoStepsSlowed|6|180000|300000
+Scripted Pipeline Maven Build|testcases/ScriptedCloneAndBuild|64|600000|300000
+Declarative Pipeline Maven Build|testcases/DeclarativeCloneAndBuild|64|600000|300000
+Trivial Parallels|testcases/ParallelPlusStepsRealisticSlowed|6|180000|300000
+Massively Parallel Node Use And Sh Steps|testcases/MassivelyParallelNodes|2|30000|450000
+# TODO CPS & NonCPS sorting algorithms with delays as appropriate
+Heavyweight and inefficient build|testcases/SamsNightMare|64|600000|300000
+SingleRun Scripted Maven|testcases/ScriptedCloneAndBuild|1|-1|300000
+SingleRun Declarative Maven Build|testcases/DeclarativeCloneAndBuild|1|-1|300000

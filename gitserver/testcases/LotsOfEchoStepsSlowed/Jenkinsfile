@@ -12,5 +12,5 @@ for (int i=0; i<10; i++) {
             echo "Here goes echo number $j"
 		}
 	}
+    sleep 1
 }
-sleep 10
