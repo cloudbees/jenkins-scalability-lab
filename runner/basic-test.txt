@@ -1,3 +1,4 @@
 # Trivial testcase for standard Hydra
 # format: test name, jobname, max concurrent number to run, ramp up time in ms, testDuration ms
-Sample Test|testcases/LotsOfEchoSteps|6|10000|60000
+Sample Test|testcases/LotsOfEchoSteps|6|30000|120000
+LightWeight|testcases/LightWeight|4|30000|120000

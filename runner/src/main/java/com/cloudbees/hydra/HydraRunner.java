@@ -167,11 +167,25 @@ public class HydraRunner {
         }
     }
 
+    /** Toggles Jenkins loadgenerator autostart */
     public static void toggleAutostart(@Nonnull URL jenkinsBase) throws Exception {
         URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/autostart?autostartState=true").toString());
         HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
         int code = resp.getStatusLine().getStatusCode();
         if (code > 302) {
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
+            throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
+        }
+    }
+
+    public static void killGeneratorJobs(@Nonnull URL jenkinsBase, @Nonnull String shortGeneratorName) throws Exception {
+        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/killGeneratorJobs?generatorName=").append(enc(shortGeneratorName)).toString());
+        HttpResponse resp = Request.Get(full.toURI()).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
+        if (code > 200) {
             logError("Failed request to "+full.toString());
             resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
@@ -281,12 +295,15 @@ public class HydraRunner {
                 endString.append(String.format("and entering cooldown period of %d ms", config.millisBetweenTests));
             }
             runner.logResult(endString.toString());
-
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
             }
+            runner.logResult(String.format("Aborting any dangling jobs from test '%s' ", tc.testName));
+            HydraRunner.killGeneratorJobs(config.getJenkinsUrl(), testToGenerator.get(tc));
+            Thread.sleep(1000L);  // Simply to allow time for aborts
+
         }
 
         runner.grabInfluxDump(config.getInfluxUrl(), "influxDump.zip");
