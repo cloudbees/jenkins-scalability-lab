@@ -258,7 +258,7 @@ public class HydraRunner {
     @CheckForNull
     private static TestConfig parseTestLine(@Nonnull String testLine) throws Exception {
         String handled = testLine.trim();
-        if (handled.startsWith("#")) {
+        if (handled.startsWith("#") || handled.isEmpty()) {
             return null;  // Comment line
         }
         String[] sections = handled.split("\\|");
