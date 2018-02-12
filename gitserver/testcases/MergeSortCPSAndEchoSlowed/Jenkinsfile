@@ -40,7 +40,7 @@ int[] mergeSortCPSAndEchoSteps(int[] array) {
     int midpoint = array.length/2;
     int[] firstHalf = new int[midpoint];
     int[] secondHalf = new int[array.length - midpoint];
-    int idx =0;
+    int idx = 0;
     for (int i = 0; i < midpoint; i++) {
         firstHalf[idx++] = array[i];
     }
