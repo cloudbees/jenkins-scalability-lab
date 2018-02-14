@@ -1,12 +1,14 @@
 # Trivial testcase for standard Hydra
+# Runs through a variety of scenarios, this is tuned for 4 core system
+# Needs up to 64 executor CPUs available with plenty of IOPs though
 # format: test name, jobname, max concurrent number to run, ramp up time in ms, testDuration ms
-Simple Steps|testcases/LotsOfEchoStepsSlowed|6|180000|300000
+Simple Steps|testcases/LotsOfEchoStepsSlowed|8|180000|300000
 Scripted Pipeline Maven Build|testcases/ScriptedCloneAndBuild|64|600000|300000
 # Declarative Pipeline Maven Build|testcases/DeclarativeCloneAndBuild|64|600000|300000
-Trivial Parallels|testcases/ParallelPlusStepsRealisticSlowed|6|180000|300000
-Massively Parallel Node Use And Sh Steps|testcases/MassivelyParallelNodes|2|30000|450000
+Trivial Parallels|testcases/ParallelPlusStepsRealisticSlowed|12|180000|300000
+Massively Parallel Node Use And Sh Steps|testcases/MassivelyParallelNodes|4|30000|450000
 Complex Groovy In Sandboxed CPS With Echo Steps|testcases/MergeSortCPSAndEchoSlowedNoLib|4|30000|450000
-Complex Groovy In Sandboxed NonCPS|testcases/MergeSortSlowedNoLib|2|30000|450000
+Complex Groovy In Sandboxed NonCPS|testcases/MergeSortSlowedNoLib|4|30000|450000
 Heavyweight and inefficient build|testcases/SamsNightMare|16|600000|300000
 # SingleRun Scripted Maven|testcases/ScriptedCloneAndBuild|1|-1|300000
 # SingleRun Declarative Maven Build|testcases/DeclarativeCloneAndBuild|1|-1|300000
