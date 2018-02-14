@@ -15,7 +15,7 @@ services:
     # Port for git push by SSD
     # TBD deploy:placement for docker swarm to run it on separate host
     ports: 
-      - "2222:22"
+      - "2222:2222"
 
   agents:
     image: vfarcic/jenkins-swarm-agent

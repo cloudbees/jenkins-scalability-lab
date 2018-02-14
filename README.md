@@ -14,7 +14,7 @@ Testbed for measuring scalability of Jenkins.
 
 * Available at [http://localhost:8080/](http://localhost:8080/)
     - From other containers, this host is known as "jenkins"
-* Includes credential 'git-ssh' with the SSH key can be used to clone or interact with the Git server, with remote ssh://git@gitserver/git-server/repos/testcases.git
+* Includes credential 'git-ssh' with the SSH key can be used to clone or interact with the Git server, with remote ssh://git@gitserver:2222/git-server/repos/testcases.git
 * Includes a multibranch project 'testcases' that will have a pipeline for each of the testcases defined as subfolders under gitserver/testcases (see below for more detail)
 * Configured to have 0 executors -- all executors will be provided by the Swarm Agent Docker containers
 * jenkins/plugins.txt will define plugins included on the master

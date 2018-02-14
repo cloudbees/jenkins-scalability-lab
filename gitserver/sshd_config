@@ -1,0 +1,24 @@
+# Stripped down sshd config for Docker with just the customized bits included
+
+Port 2222
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+# The default requires explicit activation of protocol 1
+#Protocol 2
+
+RSAAuthentication yes
+PubkeyAuthentication yes
+
+# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+# but this is overridden so installations will only check .ssh/authorized_keys
+AuthorizedKeysFile	.ssh/authorized_keys
+#AuthorizedKeysFile	/home/git/.ssh/authorized_keys
+
+# To disable tunneled clear text passwords, change to no here!
+PasswordAuthentication no
+#PermitEmptyPasswords no
+
+# override default of no subsystems
+Subsystem	sftp	/usr/lib/ssh/sftp-server

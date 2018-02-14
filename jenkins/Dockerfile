@@ -2,8 +2,11 @@ FROM jenkinsci/jenkins:2.73.3
 
 MAINTAINER svanoort
 
-# Install telegraf for monitoring
+# Install telegraf for monitoring && set up telegraf as sudoer so they can launch telegraf as root for extra disk stats
 USER root
+RUN apt-get update && apt-get install -y sudo bc \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /var/tmp/* \
+    && echo 'telegraf ALL=(root) NOPASSWD:ALL -nvL *' >> /etc/sudoers 
 RUN curl -o /tmp/telegraf.deb https://dl.influxdata.com/telegraf/releases/telegraf_1.3.5-1_amd64.deb \
     && dpkg -i /tmp/telegraf.deb && rm -f telegraf.deb
 USER jenkins
@@ -46,7 +49,8 @@ COPY jenkins.* /usr/share/jenkins/ref/
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
 # Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
 ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
--Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy"
+-Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy \
+-server -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20"
 
 # Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false

@@ -12,7 +12,7 @@
       "name": "VAR_BLOCK_DEVICE_ID",
       "type": "constant",
       "label": "Jenkins root block device id (ex vda for /dev/vda)",
-      "value": "vda",
+      "value": "nvme0n1",
       "description": ""
     }
   ],
@@ -300,6 +300,7 @@
           "steppedLine": false,
           "targets": [
             {
+              "alias": "iowait moving avg",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "cpu",
@@ -314,6 +315,12 @@
                       "usage_iowait"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [
+                      10
+                    ],
+                    "type": "moving_average"
                   }
                 ]
               ],
@@ -326,6 +333,7 @@
               ]
             },
             {
+              "alias": "sys moving avg",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "cpu",
@@ -340,6 +348,12 @@
                       "usage_system"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [
+                      10
+                    ],
+                    "type": "moving_average"
                   }
                 ]
               ],
@@ -352,6 +366,7 @@
               ]
             },
             {
+              "alias": "user moving avg",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "cpu",
@@ -368,6 +383,12 @@
                       "usage_user"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [
+                      10
+                    ],
+                    "type": "moving_average"
                   }
                 ]
               ],
@@ -380,6 +401,7 @@
               ]
             },
             {
+              "alias": "idle moving avg",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "cpu",
@@ -394,6 +416,12 @@
                       "usage_idle"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [
+                      10
+                    ],
+                    "type": "moving_average"
                   }
                 ]
               ],
@@ -450,7 +478,7 @@
               "label": "Total CPU USE",
               "logBase": 1,
               "max": "100",
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -471,6 +499,7 @@
           "datasource": "${DS_INFLUX-HYDRA}",
           "fill": 1,
           "id": 3,
+          "interval": "1m",
           "legend": {
             "alignAsTable": true,
             "avg": false,
@@ -515,7 +544,14 @@
             {
               "alias": "write IOPS",
               "dsType": "influxdb",
-              "groupBy": [],
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                }
+              ],
               "measurement": "diskio",
               "orderByTime": "ASC",
               "policy": "default",
@@ -530,6 +566,10 @@
                     "type": "field"
                   },
                   {
+                    "params": [],
+                    "type": "mean"
+                  },
+                  {
                     "params": [
                       "1s"
                     ],
@@ -540,15 +580,22 @@
               "tags": [
                 {
                   "key": "name",
-                  "operator": "=~",
-                  "value": "/^$block_device_id$/"
+                  "operator": "=",
+                  "value": "nvme0n1"
                 }
               ]
             },
             {
               "alias": "read IOPS",
               "dsType": "influxdb",
-              "groupBy": [],
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                }
+              ],
               "measurement": "diskio",
               "orderByTime": "ASC",
               "policy": "default",
@@ -561,6 +608,10 @@
                       "reads"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
                   },
                   {
                     "params": [
@@ -581,7 +632,14 @@
             {
               "alias": "read bps",
               "dsType": "influxdb",
-              "groupBy": [],
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                }
+              ],
               "measurement": "diskio",
               "orderByTime": "ASC",
               "policy": "default",
@@ -594,6 +652,10 @@
                       "read_bytes"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
                   },
                   {
                     "params": [
@@ -614,7 +676,14 @@
             {
               "alias": "write bps",
               "dsType": "influxdb",
-              "groupBy": [],
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                }
+              ],
               "measurement": "diskio",
               "orderByTime": "ASC",
               "policy": "default",
@@ -627,6 +696,10 @@
                       "write_bytes"
                     ],
                     "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
                   },
                   {
                     "params": [
@@ -1704,6 +1777,128 @@
       "showTitle": false,
       "title": "Processes & Leaks",
       "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_INFLUX-HYDRA}",
+          "fill": 1,
+          "id": 12,
+          "interval": "1m",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "File Descriptors",
+              "dsType": "influxdb",
+              "groupBy": [],
+              "measurement": "procstat",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "java_num_fds"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "dsType": "influxdb",
+              "groupBy": [],
+              "measurement": "procstat",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "java_num_threads"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Leak Candidates: File Descriptors & Threads",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
     }
   ],
   "schemaVersion": 14,
@@ -1751,7 +1946,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -1781,5 +1976,5 @@
   },
   "timezone": "browser",
   "title": "Scalability Lab Core Metrics",
-  "version": 15
+  "version": 17
 }

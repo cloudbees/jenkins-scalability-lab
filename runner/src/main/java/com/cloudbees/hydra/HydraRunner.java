@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Configures and executes basic Hydra testcases
@@ -45,8 +47,11 @@ public class HydraRunner {
         @Option(name="-w", usage = "Milliseconds to wait between tests")
         long millisBetweenTests = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
 
-        @Option(name="-t", aliases = {"--tests"}, usage="Path to tests file", required = true)
+        @Option(name="-f", aliases = {"--testFile"}, usage="Path to tests file", required = true)
         String testsPath;
+
+        @Option(name="-t", aliases = {"--tags"}, usage="Tags to write for all testcases, common-delimited")
+        String tags = null;
 
         public URL getJenkinsUrl() {
             try {
@@ -54,6 +59,15 @@ public class HydraRunner {
             } catch (MalformedURLException mue) {
                 throw new RuntimeException(mue);
             }
+        }
+
+        @Nonnull
+        public List<String> getTags() {
+            String trimmed;
+            if (tags == null || (trimmed=tags.trim()).isEmpty() ) {
+                return Collections.emptyList();
+            }
+            return Arrays.stream(tags.split(",")).map(f->f.trim()).filter(f->f!=null && !f.isEmpty()).collect(Collectors.toList());
         }
 
         public URL getInfluxUrl() {
@@ -106,7 +120,7 @@ public class HydraRunner {
         }
     }
 
-    public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull String[] tags) throws Exception {
+    public static void sendInfluxEvent(@Nonnull URL serverPath, @Nonnull String dbName, @Nonnull String title, @Nonnull String text, @CheckForNull List<String> tags) throws Exception {
         URL full = new URL(serverPath, new StringBuilder("write?db=").append(enc(dbName)).append("&precision=s").toString());
         long timestampSec = System.currentTimeMillis()/1000;
         // TODO figure out how to escape quotes in the InfluxDB event format
@@ -114,9 +128,9 @@ public class HydraRunner {
                 .append(title).append("\",text=\"")
                 .append(text).append("\",tags=\"");
         // Add tags if present
-        if (tags != null && tags.length > 0 && Arrays.stream(tags).filter(FILLED_STRING).findFirst().isPresent()) {
-            String tagString = Arrays.stream(tags).filter(FILLED_STRING).collect(Collectors.joining(","));
-            content.append(enc(tagString));
+        if (tags != null && tags.size() > 0 && tags.stream().filter(FILLED_STRING).findFirst().isPresent()) {
+            String tagString = tags.stream().filter(FILLED_STRING).collect(Collectors.joining(","));
+            content.append((tagString));
         }
         content.append("\" ").append(timestampSec);
 
@@ -167,11 +181,25 @@ public class HydraRunner {
         }
     }
 
+    /** Toggles Jenkins loadgenerator autostart */
     public static void toggleAutostart(@Nonnull URL jenkinsBase) throws Exception {
         URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/autostart?autostartState=true").toString());
         HttpResponse resp = Request.Post(full.toURI()).execute().returnResponse();
         int code = resp.getStatusLine().getStatusCode();
         if (code > 302) {
+            logError("Failed request to "+full.toString());
+            resp.getEntity().writeTo(System.err);
+            throw new IOException("Request failed, response code: "+code);
+        } else {
+            EntityUtils.consume(resp.getEntity());
+        }
+    }
+
+    public static void killGeneratorJobs(@Nonnull URL jenkinsBase, @Nonnull String shortGeneratorName) throws Exception {
+        URL full = new URL(jenkinsBase, new StringBuilder("/loadgenerator/killGeneratorJobs?generatorName=").append(enc(shortGeneratorName)).toString());
+        HttpResponse resp = Request.Get(full.toURI()).execute().returnResponse();
+        int code = resp.getStatusLine().getStatusCode();
+        if (code > 200) {
             logError("Failed request to "+full.toString());
             resp.getEntity().writeTo(System.err);
             throw new IOException("Request failed, response code: "+code);
@@ -230,7 +258,7 @@ public class HydraRunner {
     @CheckForNull
     private static TestConfig parseTestLine(@Nonnull String testLine) throws Exception {
         String handled = testLine.trim();
-        if (handled.startsWith("#")) {
+        if (handled.startsWith("#") || handled.isEmpty()) {
             return null;  // Comment line
         }
         String[] sections = handled.split("\\|");
@@ -272,7 +300,8 @@ public class HydraRunner {
         for (TestConfig tc : tests) {
             runner.logResult(String.format("STARTING test '%s' and it will run for %d ms", tc.testName, tc.getTotalDurationMillis()));
 
-            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Starting testcase "+tc.testName, "jobName: "+tc.jobName, null);
+            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Starting testcase "+tc.testName, "jobName: "+tc.jobName,
+                    Stream.concat(config.getTags().stream(), Stream.of("start-test")).collect(Collectors.toList()));
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
             Thread.sleep(tc.getTotalDurationMillis());
 
@@ -281,12 +310,15 @@ public class HydraRunner {
                 endString.append(String.format("and entering cooldown period of %d ms", config.millisBetweenTests));
             }
             runner.logResult(endString.toString());
-
             runner.toggleLoadGenerator(config.getJenkinsUrl(), testToGenerator.get(tc));
-            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "", null);
+            HydraRunner.sendInfluxEvent(config.getInfluxUrl(), "hydra", "Ending testcase "+tc.testName, "",
+                    Stream.concat(config.getTags().stream(), Stream.of("end-test")).collect(Collectors.toList()));;
             if (tc != last) {
                 Thread.sleep(config.millisBetweenTests);
             }
+            runner.logResult(String.format("Aborting any dangling jobs from test '%s' ", tc.testName));
+            HydraRunner.killGeneratorJobs(config.getJenkinsUrl(), testToGenerator.get(tc));
+            Thread.sleep(1000L);  // Simply to allow time for aborts
         }
 
         runner.grabInfluxDump(config.getInfluxUrl(), "influxDump.zip");

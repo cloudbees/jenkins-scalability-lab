@@ -1,0 +1,7 @@
+# Scalablity test only, runs basic maven builds first one at a time for baseline
+# Then scaling up to using 128 concurrent runs (needs 128 executors!)
+# format: test name, jobname, max concurrent number to run, ramp up time in ms, testDuration ms
+Scripted Pipeline Maven Build|testcases/ScriptedCloneAndBuild|1|-1|300000
+Declarative Pipeline Maven
+Single Pipeline Maven Build|testcases/ScriptedCloneAndBuild|128|600000|300000
+Declarative Pipeline Maven

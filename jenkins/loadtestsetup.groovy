@@ -49,7 +49,7 @@ WorkflowMultiBranchProject proj = Jenkins.instance.getItemByFullName("testcases"
 if (proj == null) {
     // We check before creating & configuring just to ensure this is idempotent and doesn't add excess SCMSources
     proj = Jenkins.instance.createProject(WorkflowMultiBranchProject.class, "testcases");  
-    GitSCMSource scm = new GitSCMSource("gitserver", "ssh://git@gitserver/git-server/repos/testcases.git", "git-ssh", "*", "", false);
+    GitSCMSource scm = new GitSCMSource("gitserver", "ssh://git@gitserver:2222/git-server/repos/testcases.git", "git-ssh", "*", "", false);
     proj.getSourcesList().add(new BranchSource(scm));
 }
 
@@ -58,7 +58,7 @@ if (proj == null) {
 */
 LibraryConfiguration sharedLib = new LibraryConfiguration(
     'sort-lib',
-     new SCMSourceRetriever(new GitSCMSource("gitserver", "ssh://git@gitserver/git-server/repos/shared-libs.git", "git-ssh", "*", "", false))
+     new SCMSourceRetriever(new GitSCMSource("gitserver", "ssh://git@gitserver:2222/git-server/repos/shared-libs.git", "git-ssh", "*", "", false))
 );
 sharedLib.setDefaultVersion('master');
 GlobalLibraries.get().setLibraries(Arrays.asList(sharedLib));

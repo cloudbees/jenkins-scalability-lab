@@ -32,7 +32,7 @@ ROOT_BLKDEV="/dev/$ROOT_BLKDEV_NAME"
 echo "BLOCK DEVICE ID IS $ROOT_BLKDEV"
 
 # Start git server, see keys from https://github.com/jkarlosb/git-server-docker
-docker run --rm -d -p 2222:22 \
+docker run --rm -d -p 2222:2222 \
    --network scalability-bridge \
    -h gitserver \
    --name gitserver -l role=gitserver \
@@ -74,7 +74,7 @@ docker run --rm -d --network scalability-bridge \
 # "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
 # Cap add for sys ptrace is for syscall info
 docker run --cap-add=SYS_PTRACE --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
-  -p 8080:8080 -p 9011:9011 \
+  -p 8080:8080 -p 9011:9011 -p 50000:50000 \
   -v jenkins_home:/var/jenkins_home \
-  --device-write-iops $ROOT_BLKDEV:200 --device-write-bps $ROOT_BLKDEV:100mb --device-read-iops $ROOT_BLKDEV:200 --device-read-bps $ROOT_BLKDEV:100mb \
+  --device-write-iops $ROOT_BLKDEV:2000 --device-write-bps $ROOT_BLKDEV:200mb --device-read-iops $ROOT_BLKDEV:2000 --device-read-bps $ROOT_BLKDEV:200mb \
   jenkins-scalability-master:2.0-recent
