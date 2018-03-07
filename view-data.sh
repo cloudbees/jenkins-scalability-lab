@@ -10,7 +10,7 @@ export INFLUXDIR="$(pwd)/influx-viewing"
 rm -rf "$BACKUPDIR" || true
 rm -rf "$INFLUXDIR" || true
 mkdir "$BACKUPDIR"
-tar -xzf *.tar.gz -C ./dump
+tar -xzf *metrics*.tar.gz -C ./dump
 
 # Rebuild DB in an ephemeral container with a bind mount to export results
 # Roughly as suggested by https://www.influxdata.com/blog/backuprestore-of-influxdb-fromto-docker-containers/
