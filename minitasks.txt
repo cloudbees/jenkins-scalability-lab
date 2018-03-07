@@ -33,7 +33,7 @@ X Fix the JENKINS_HOME getting wrong user permissions (sigh, again, probably cau
 # Polish
 X Automate agent setup with Docker swarm
 NOPE Docker compose what I can using docker swarm?
-- Look at reducing the graphite metrics update interval and submitting filtered metrics to get better #s
+X Look at reducing the graphite metrics update interval and submitting filtered metrics to get better #s
 
 # Basics
 X random-job-builder -- seems to take a while to kick in
@@ -51,8 +51,8 @@ X Linux metrics plugin for IO and network:
     + Network stats: https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-net-statistics
     + Also: /sys/block/vda/stat and /sys/block/vda/vda1/stat
 X Random job builder: filter for jobs
-- Random job builder: keep queue full
-- Select metrics of interest to report on?
+X Random job builder: keep queue full
+X Select metrics of interest to report on?
 
 # Metrics key:
 RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJIpsPEy06BRqCgyrDuxR
@@ -62,7 +62,7 @@ URL: http://localhost:8080/metrics/RX2JW0L9ZvRI2LH6enXPBldWa9841H2oaiUS38cEDNgmJ
 Need to create metrics key, and then hit API
 
 # InfluxDB Data Retention
-* Set it up to store all the things
+X Set it up to store all the things
 
 ## Image
 https://github.com/hopsoft/docker-graphite-statsd

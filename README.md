@@ -1,14 +1,33 @@
 # jenkins-scalability-lab
 Testbed for measuring scalability of Jenkins.
 
-# Usage
+# Local Usage
 * For custom testcases, at the moment you may wish to create branches for your scenarios
-* To build everything and bring up the environmeent, go to the 'local' folder and run `./build-local.sh`
+* To build everything and bring up the environment, go to the 'local' folder and run `./build-local.sh`
 * To shut all of the environment down and kill containers, run `./shutdown.sh` from this location (one level up from 'local')
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs, but you can clear configuration with `docker volume rm jenkins_home`
     - Your gitserver repo data will be lost (that's fine, it's copied from a local folder)
-    - All of your graphite data will be lost
-* There are some helpful scripts to run via script console on the master in the 'user-scripts' folder :)
+    - All of your InfluxDB data will be lost
+
+# AWS Usage
+* See subfolder "aws" which has docs and scripts (requires SSH access to a couple hosts)
+* This relies on using Docker with the 'add-host' to bind container hostnames to the IP addresses
+    - You'll need to manually customize the IP addresses in scripts since AWS dynamically assigns private IPs
+
+# Fully automated test scenarios
+Fully-automated test scenarios are supported via a small 'runner' library and minimal testcase format, located under the 'runner folder'.  
+
+This is built trivially with Maven, simply go to the folder and run `mvn clean install package`.  It will generate a "fat JAR" containing all dependencies (runner/target/hydra-runner-1.0-SNAPSHOT-jar-with-dependencies.jar), so the only requirement after that is Java 8.
+
+This is used by running the fat JAR directly with 'java -jar' , and provides its own help documentation on command-line options.
+
+See runner/run-basic-test.sh for an example of using the script and runner/fulltest.txt and runner/basic-test.txt for example tests.
+
+# Capturing Metrics Dumps & Viewing them Later
+
+In many cases you will want to save the full batch of metrics provided by running a set of scalability tests.  To facilitate this, the script "dump-data.sh" is provided in the root directory of this folder.  If this script or its commands are run from the system hosting the InfluxDB container then it will generate a file 'hydra-metrics.tar.gz' containing a dump of all the metrics for that Influx instance. 
+
+This single tar.gz file can be copied from that host (for example via SCP) and later used to launch an Influx instance with that data in it, which can be viewed with a local Grafana instance.  This can be accomplished with script 'view-data.sh' which will launch a local InfluxDB container and Grafana viewer instance with this data, looking for a tar.gz file containing 'metrics' in the name.
 
 ## The Jenkins master: our test target
 
@@ -119,3 +138,8 @@ docker run --rm -d \
 ```
 2. Revise git server container URLs to point to localhost:2222 rather than gitserver:22  -- just on Jenkins within the Pipeline shared libraries (configure Jenkins) + Multibranch Project config
 3. On Jenkins global configuration, change the Graphite server to point at your computer's hostname rather than 'influx' (the ports will map correctly)
+
+# Custom Plugin Code Locations
+Besides the Load Generator logic (currently a branch off of the Random Job Builder plugin), we use a small "Scalability Info Plugin" to provide some additional metrics including Flownodes-per-second for Pipeline and Load Generator Task Counts.  
+
+Source for this currently lives on Github, at [https://github.com/cloudbees/scalability-info-plugin](https://github.com/cloudbees/scalability-info-plugin).
