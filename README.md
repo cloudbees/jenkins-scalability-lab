@@ -17,7 +17,7 @@ Testbed for measuring scalability of Jenkins.
 # Fully automated test scenarios
 Fully-automated test scenarios are supported via a small 'runner' library and minimal testcase format, located under the 'runner folder'.  
 
-This is built trivially with Maven, simply go to the folder and run `mvn clean install package`.  It will generate a "fat JAR" containing all dependencies (runner/target/hydra-runner-1.0-SNAPSHOT-jar-with-dependencies.jar), so the only requirement after that is Java 8.
+This is built trivially with Maven, simply go to the folder and run `mvn clean install package`.  It will generate a "fat JAR" containing all dependencies (runner/target/hydra-runner-1.0-SNAPSHOT.jar), so the only requirement after that is Java 8.
 
 This is used by running the fat JAR directly with 'java -jar' , and provides its own help documentation on command-line options.
 
