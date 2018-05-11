@@ -1,3 +1,4 @@
+blueocean:latest
 git:latest
 git-client:latest
 pipeline-build-step:latest

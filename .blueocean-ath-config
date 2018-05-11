@@ -1,0 +1,7 @@
+# Put in home_dir to run ATH with local Jenkins
+#webDriverUrl=http://localhost:9515
+#webDriverBrowserSize=1600x900
+# jenkinsUrl=http://192.168.3.133:56217
+jenkinsUrl=http://localhost:8080/
+adminUsername=admin
+adminPassword=admin
