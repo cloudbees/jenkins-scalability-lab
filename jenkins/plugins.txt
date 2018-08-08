@@ -20,7 +20,7 @@ workflow-basic-steps:latest
 workflow-cps:latest
 workflow-cps-global-lib:latest
 # https://github.com/jenkinsci/workflow-durable-task-step-plugin/pull/21
-workflow-durable-task-step:incrementals;org.jenkins-ci.plugins.workflow;jglick;2.20-rc333.74dc7c303e6d
+workflow-durable-task-step:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc706.90409743a2eb;jglick;logs-JENKINS-38381
 # https://github.com/jenkinsci/workflow-job-plugin/pull/27
 workflow-job:incrementals;org.jenkins-ci.plugins.workflow;2.25-rc824.49c91cd14666;jglick;logs-JENKINS-38381
 workflow-multibranch:latest
