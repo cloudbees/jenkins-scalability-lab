@@ -15,16 +15,16 @@ scm-api:latest
 script-security:latest
 workflow-aggregator:2.5
 # https://github.com/jenkinsci/workflow-api-plugin/pull/17
-workflow-api:incrementals;org.jenkins-ci.plugins.workflow;2.30-rc-802-fa-5-alpha-94-c-8-alpha-65;jglick;logs-JENKINS-38381
+workflow-api:incrementals;org.jenkins-ci.plugins.workflow;2.29-rc219.239019e84015;jglick;logs-JENKINS-38381
 workflow-basic-steps:latest
 workflow-cps:latest
 workflow-cps-global-lib:latest
 # https://github.com/jenkinsci/workflow-durable-task-step-plugin/pull/21
 workflow-durable-task-step:incrementals;org.jenkins-ci.plugins.workflow;jglick;2.20-rc333.74dc7c303e6d
 # https://github.com/jenkinsci/workflow-job-plugin/pull/27
-workflow-job:incrementals;org.jenkins-ci.plugins.workflow;2.25-rc-824.49-c-91-cd-14666;jglick;logs-JENKINS-38381
+workflow-job:incrementals;org.jenkins-ci.plugins.workflow;2.22-rc311.5616213fbed0;jglick;logs-JENKINS-38381
 workflow-multibranch:latest
 workflow-scm-step:latest
 workflow-step-api:latest
 # https://github.com/jenkinsci/workflow-support-plugin/pull/15
-workflow-support:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc-617.27-alpha-34-dc-2-c-64-c;jglick;logs-JENKINS-38381
+workflow-support:incrementals;org.jenkins-ci.plugins.workflow;2.19-rc265.3e5e4aeecfff;jglick;logs-JENKINS-38381
