@@ -1,4 +1,4 @@
-FROM jenkinsci/jenkins:2.73.3
+FROM jenkinsci/jenkins:2.121.2
 
 MAINTAINER svanoort
 
