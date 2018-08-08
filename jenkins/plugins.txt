@@ -28,5 +28,3 @@ workflow-scm-step:latest
 workflow-step-api:latest
 # https://github.com/jenkinsci/workflow-support-plugin/pull/15
 workflow-support:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc-617.27-alpha-34-dc-2-c-64-c;jglick;logs-JENKINS-38381
-# https://github.com/jenkinsci/durable-task-plugin/pull/60
-durable-task:incrementals;org.jenkins-ci.plugins;1.25-rc353.399e3eb7deb7;jglick;watch-JENKINS-38381
