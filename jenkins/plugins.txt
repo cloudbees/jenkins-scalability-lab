@@ -14,13 +14,19 @@ pipeline-stage-view:latest
 scm-api:latest
 script-security:latest
 workflow-aggregator:2.5
-workflow-api:latest
+# https://github.com/jenkinsci/workflow-api-plugin/pull/17
+workflow-api:incrementals;org.jenkins-ci.plugins.workflow;2.30-rc802.0fa5a94c8a65;jglick;logs-JENKINS-38381
 workflow-basic-steps:latest
 workflow-cps:latest
 workflow-cps-global-lib:latest
-workflow-durable-task-step:latest
-workflow-job:latest
+# https://github.com/jenkinsci/workflow-durable-task-step-plugin/pull/21
+workflow-durable-task-step:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc714.9594a9e93b18;jglick;logs-JENKINS-38381
+# https://github.com/jenkinsci/workflow-job-plugin/pull/27
+workflow-job:incrementals;org.jenkins-ci.plugins.workflow;2.25-rc824.49c91cd14666;jglick;logs-JENKINS-38381
 workflow-multibranch:latest
 workflow-scm-step:latest
 workflow-step-api:latest
-workflow-support:latest
+# https://github.com/jenkinsci/workflow-support-plugin/pull/15
+workflow-support:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc617.27a34dc2c64c;jglick;logs-JENKINS-38381
+# https://github.com/jenkinsci/durable-task-plugin/pull/60
+durable-task:incrementals;org.jenkins-ci.plugins;1.26-rc361.8feca397d0cb;jglick;watch-JENKINS-38381

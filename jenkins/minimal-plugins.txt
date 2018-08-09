@@ -7,5 +7,4 @@ ssh-credentials:latest
 ssh-slaves:latest
 support-core:latest
 swarm:3.4
-workflow-durable-task-step:latest
 workflow-multibranch:latest
