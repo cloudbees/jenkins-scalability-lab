@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Setup
-sudo yum install -y docker && sudo service docker start && sudo su
-
 # Launch worker
 docker run --rm -d \
   --add-host jenkins:10.0.0.12 --add-host gitserver:10.0.0.168 \

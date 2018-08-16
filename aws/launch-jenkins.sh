@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Setup
-sudo yum install -y docker && sudo service docker start && sudo su
-
 # Launch our Jenkins instance or thereabouts
 docker run --cap-add=SYS_PTRACE --rm -it -h jenkins --name jenkins -l role=jenkins \
   --add-host influx:10.0.0.168 --add-host gitserver:10.0.0.168 \

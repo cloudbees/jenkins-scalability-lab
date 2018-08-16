@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Setup
-sudo yum install -y docker && sudo service docker start && sudo su
-
 # Launch the influx instance
 docker run -d --rm -h influx --name influx \
  -p 8083:8083 -p 8086:8086 -p 2015:2015 \
