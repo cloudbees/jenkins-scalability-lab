@@ -10,11 +10,6 @@ if [ ! -f id_rsa ]; then
   chmod 600 id_rsa*
 fi
 
-# Create network if absent
-if [ $(docker network ls | grep scalability-bridge | wc -l) -eq 0 ]; then
-    docker network create --attachable -d bridge scalability-bridge
-fi
-
 # Needed to pick up git configs and some other things
 CONFIG_DIR=$(cd .. && pwd)
 mkdir -p "${CONFIG_DIR}/gitserver/keys/"
