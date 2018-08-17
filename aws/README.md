@@ -14,7 +14,7 @@ The instance consists of 3 VMs:
 * Utility VM
   * Offers Git server which serves tests and Pipeline libs
   * Also contains InfluxDB needed for Grafana
-* Swarm host(s)
+* Swarm agent host(s)
   * A number of hosts, which provide Jenkins agents for the instance
   * The implementation is based on the Swarm Plugin
 
@@ -31,7 +31,7 @@ The instance consists of 3 VMs:
 ** It is recommended to have more than 128Gb of storage for the instance
 * Swarm workers - probably need public IPs, terminate on stop
 
-## Step 1. Prepare VMs
+## Step 1. Prepare VMs and Configure Hydra
 
 1. Create VPC with IPv4 / IPv6 subnet
 2. Create security ACL fo VPC that allows:
@@ -46,6 +46,11 @@ The instance consists of 3 VMs:
 6. Launch a hydra-util ec2 instance (t2.medium, security group, in vpc, minimum gp2 volume), and hydra-jenkins (instance of your choice)
   * Will need to get EC2 public IPs for binding to docker containers via --add-host arguments
   * Will need EC2 public IPs for user to access + private IPs for within-vpc communication
+7. Launch as many Swarm agent host VMs as needed
+8. Save IP addresses of created machines to `aws/settings.sh`
+9. Configure other settings as needed
+10. Commit changes in the repository and push it to your branch which
+    will be used in all further operations.
 
 ## Step 2. Deploy Hydra
 
@@ -70,6 +75,8 @@ The instance consists of 3 VMs:
 6. Ensure that influxdb and gitserver containers are running
 
 ### Swarm workers
+
+For each Swarm agent host...
 
 1. SSH to `hydra-util`, configure Git and Checkout this repository
 2. Run the `instance-preconfigure.sh` script
