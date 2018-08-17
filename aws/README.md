@@ -1,19 +1,37 @@
-# Instance setup
+Jenkins Scalability Lab in AWS
+====
 
-* Baseline: Amazon Linux 2 LTS Candidate AMI 2017.12.0
+For all kinds of performance tests,
+it is recommended to use a Hydra installation in AWS.
+
+# Configuration
+
+The instance consists of 3 VMs:
+
+* Jenkins master
+  * Jenkins master port: 8080 (security is disabled)
+  * Grafana port: 8081 (admin/admin)
+* Utility VM
+  * Offers Git server which serves tests and Pipeline libs
+  * Also contains InfluxDB needed for Grafana
+* Swarm host(s)
+  * A number of hosts, which provide Jenkins agents for the instance
+  * The implementation is based on the Swarm Plugin
+
+# Manual AWS setup
+
+## Instance configuration
+
+* Baseline: Latest Amazon Linux 2
 * Util host (Git + Influx) - t2.large, ~10GB volume
-    - Only really need 10 GB, 2 cores part of the time and some IO
-    - Uses only a few GB of disk space
+** Only really need 10 GB, 2 cores part of the time and some IO
+** Uses only a few GB of disk space
 * Jenkins basic - c5.xlarge (4 core, 8 GB RAM)
-    - Volume determines storage perf
+** Volume and script settings determine the storage performance
+** It is recommended to have more than 128Gb of storage for the instance
 * Swarm workers - probably need public IPs, terminate on stop
 
-#Setup:
-
-* 'sudo yum install -y docker && sudo service docker start && sudo su' 
-* Then run image(s)
-
-# Nasty manual AWS setup
+## Step 1. Prepare VMs
 
 1. Create VPC with IPv4 / IPv6 subnet
 2. Create security ACL fo VPC that allows:
@@ -28,4 +46,49 @@
 6. Launch a hydra-util ec2 instance (t2.medium, security group, in vpc, minimum gp2 volume), and hydra-jenkins (instance of your choice)
   * Will need to get EC2 public IPs for binding to docker containers via --add-host arguments
   * Will need EC2 public IPs for user to access + private IPs for within-vpc communication
-7. SCP gitserver SSH keys to hydra-util, and copy to /tmp/keys
+
+## Step 2. Deploy Hydra
+
+### Jenkins Master
+
+1. SSH to `hydra-util`, configure Git and Checkout this repository
+2. Run the `instance-preconfigure.sh` script
+3. Logout and login back
+4. Run the `local/build-local.sh` script to build Docker containers
+5. Run the `util-containers/launch-util-containers.sh` script
+6. Download `id_rsa` and `id_rsa.pub` from `/usr/share/jenkins/ref/` and save them somewhere
+   (e.g. in [secrets-store-ops](https://github.com/cloudbees/secrets-store-ops)).
+   They will be used to setup Git Server.
+
+### Util Containers
+
+1. SSH to `hydra-util`, configure Git and Checkout this repository
+2. Run the `instance-preconfigure.sh` script
+3. Logout and login back
+4. Run the `util-containers/launch-util-containers.sh` script
+5. SCP gitserver SSH keys to hydra-util, and copy to /tmp/keys
+6. Ensure that influxdb and gitserver containers are running
+
+### Swarm workers
+
+1. SSH to `hydra-util`, configure Git and Checkout this repository
+2. Run the `instance-preconfigure.sh` script
+3. Logout and login back
+4. Run the `util-containers/launch-agent.sh` script
+
+## Step 3. Init test jobs
+
+1. Go to the Jenkins Web UI
+2. Go to the `testcases` directory
+3. Run branch indexing. A number of folders should be created and start executing jobs
+  * If no, gitserver connection is misconfigured
+4. Wait till all jobs are exeuted
+
+# Notes
+
+## Updating instances
+
+* Pull the latest changes from the repository
+* Run `shutdown.sh` from the root
+* Rebuild containers using `local/build-local.sh`
+* Restart containers using  `aws/${machineName}/launch-*.sh` scripts

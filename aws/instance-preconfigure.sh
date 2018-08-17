@@ -5,3 +5,8 @@ set -o pipefail
 
 sudo yum install -y git
 sudo yum install -y docker && sudo service docker start
+sudo chkconfig docker on
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+# Add Maven installation?
