@@ -101,6 +101,12 @@ For each Swarm agent host...
 6. Run any test execution script from the `runner` directory
 7. Wait...
 
+Collecting data:
+
+1. SSH to the `hydra-util` instance
+2. Run the `dump-data.sh` script
+3. SCP the data to test results storage
+
 # Notes
 
 ## Updating instances
