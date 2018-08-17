@@ -98,7 +98,8 @@ ssh-agent $(ssh-add ./id_rsa; git push origin $myBranchName)
 # Manual configuration (currently being automated)
 
 ## To trigger load
-1. Go to "Manage Jenkins" -> "Configure Jenkins", and under Load Generators, add some and save.  Then clock the "Load Generators" link on the left sidebar and set global autostart to true (click the top button) and activate the generator(s) you want.  Jobs will start
+1. Go to "Manage Jenkins" -> "Configure Jenkins", and under Load Generators, add some and save.  
+Then click the "Load Generators" link on the left sidebar and set global autostart to true (click the top button) and activate the generator(s) you want.  Jobs will start
 
 # Troubleshooting
 * **Problem:** Basic issues i.e. something broke

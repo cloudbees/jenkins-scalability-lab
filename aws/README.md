@@ -91,6 +91,16 @@ For each Swarm agent host...
   * If no, gitserver connection is misconfigured
 4. Wait till all jobs are exeuted
 
+# Running tests
+
+1. SSH to the Jenkins master VM
+2. Install JDK 8 and Maven 3.5.4
+3. Go to `runner` and run `mvn clean install`
+4. Trigger workload (see README)
+5. Run `source aws/settings.sh`
+6. Run any test execution script from the `runner` directory
+7. Wait...
+
 # Notes
 
 ## Updating instances
