@@ -2,6 +2,8 @@
 set -xe
 set -o pipefail
 
+CONFIG_DIR=$(cd .. && pwd)
+
 # Create network if absent
 if [ $(docker network ls | grep scalability-bridge | wc -l) -eq 0 ]; then
     docker network create --attachable -d bridge scalability-bridge
