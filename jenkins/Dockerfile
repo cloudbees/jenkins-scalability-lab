@@ -23,7 +23,7 @@ COPY telegraf.conf /etc/telegraf/telegraf.conf
 
 # Make tini launch helper script that invokes telegraf as well as Jenkins
 COPY full-start.sh /usr/local/bin/full-start.sh
-ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
+ENTRYPOINT ["tini", "--", "/usr/local/bin/full-start.sh"]
 
 # Plugin installs: custom plugins, test framework plugins + custom snapshots 
 # Lock files write is a workaround for a bug in plugin install file where it tries to remove nonexistent lock
@@ -50,7 +50,7 @@ COPY jenkins.* /usr/share/jenkins/ref/
 # Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
 ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
 -Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy \
--server -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20"
+-server -XX:+AlwaysPreTouch -XX:+UseSerialGC -XX:MinHeapFreeRatio=15 -XX:MaxHeapFreeRatio=30  -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=20 -XX:MetaspaceSize=64m -Xms64m -XX:MaxMetaspaceExpansion=1M "
 
 # Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
