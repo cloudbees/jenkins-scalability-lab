@@ -32,7 +32,7 @@ for (def i=0; i<15; i++) {
             }
         // } // ends the withEnv block
 
-    }}
+    }})
 }
 
 parallel(x)
