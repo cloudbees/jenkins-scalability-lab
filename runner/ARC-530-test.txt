@@ -1,0 +1,8 @@
+# Trivial testcase for standard Hydra
+# Intended to exercise runner framework
+# format: test name, jobname, max concurrent number to run, ramp up time in ms, testDuration ms
+Sample Test|testcases/LotsOfEchoSteps|6|30000|120000
+Large Shell Step Logs|testcases/LargeShellStepLogs|4|30000|120000
+Massively Parallel Node Use And Sh Steps|testcases/MassivelyParallelNodes|4|30000|450000
+Scripted Pipeline Maven Build - Single|testcases/ScriptedCloneAndBuild|64|600000|300000
+Scripted Pipeline Maven Build - Parallel|testcases/ScriptedCloneAndBuildParallel|64|600000|300000
