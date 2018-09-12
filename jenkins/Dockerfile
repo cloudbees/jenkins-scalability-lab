@@ -48,9 +48,13 @@ COPY jenkins.* /usr/share/jenkins/ref/
 
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
 # Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
-ENV JAVA_OPTS "-Xshare:on -XX:CICompilerCount=2 -XX:ReservedCodeCacheSize=32m -XX:+UseCodeCacheFlushing -Xss768k -Dgraphite.metrics.intervalSeconds=10 -XX:NativeMemoryTracking=detail -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
+ENV JAVA_OPTS "-Djetty.http.idleTimeout=5000 -Xshare:on -XX:CICompilerCount=2 -XX:ReservedCodeCacheSize=32m -XX:+UseCodeCacheFlushing -Xss768k -Dgraphite.metrics.intervalSeconds=10 -XX:NativeMemoryTracking=detail -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
 -Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy \
 -server -XX:+AlwaysPreTouch -XX:+UseSerialGC -XX:MinHeapFreeRatio=15 -XX:MaxHeapFreeRatio=30  -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=20 -XX:MetaspaceSize=64m -Xms64m -XX:MaxMetaspaceExpansion=1M "
+
+# Below becomes "--qtpMaxThreadsCount=" and "--jettyAcceptorsCount=" and "--jettySelectorsCount=" in later versions
+# See https://github.com/jenkinsci/winstone/pull/54/
+ENV JENKINS_OPTS="--handlerCountMax=10 --handlerCountMaxIdle=1 "
 
 # Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
