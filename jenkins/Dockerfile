@@ -23,7 +23,7 @@ COPY telegraf.conf /etc/telegraf/telegraf.conf
 
 # Make tini launch helper script that invokes telegraf as well as Jenkins
 COPY full-start.sh /usr/local/bin/full-start.sh
-ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/full-start.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/full-start.sh"]
 
 # Plugin installs: custom plugins, test framework plugins + custom snapshots 
 # Lock files write is a workaround for a bug in plugin install file where it tries to remove nonexistent lock
