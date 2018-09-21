@@ -1,4 +1,4 @@
-FROM jenkins/jenkins-experimental:latest-jdk10
+FROM jenkins/jenkins-experimental:jdk11-for-jdk8-docker
 
 MAINTAINER svanoort
 
