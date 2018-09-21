@@ -55,15 +55,8 @@ ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxrem
 # Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
-# RSA key hack, try to set it up so it doesn't use tmp in the near future
-USER root
-COPY id_rsa* /usr/share/jenkins/ref/
-
 # Let's try copying a maven config over.
 COPY jenkins.mvn.GlobalMavenConfig.xml /usr/share/jenkins/ref/
 COPY hudson.tasks.Maven.xml /usr/share/jenkins/ref/
 
-# Chown and chmod files copied in from externally
-RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa* \
-    && chmod 600 usr/share/jenkins/ref/id_rsa*
 USER jenkins
