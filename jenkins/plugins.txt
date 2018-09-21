@@ -23,4 +23,4 @@ workflow-job:experimental
 workflow-multibranch:experimental
 workflow-scm-step:latest
 workflow-step-api:experimental
-workflow-support:experimental
+workflow-support:incrementals;org.jenkins-ci.plugins.workflow;2.21-rc591.43d37d4d080a

@@ -1,4 +1,4 @@
-FROM jenkins/jenkins-experimental:jdk11-for-jdk8-docker
+FROM jenkins/jenkins-experimental:java11-support-on-jdk8
 
 MAINTAINER svanoort
 
@@ -48,7 +48,7 @@ COPY jenkins.* /usr/share/jenkins/ref/
 
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
 # Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
-ENV JAVA_OPTS "--add-modules java.xml.bind --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
+#ENV JAVA_OPTS "--add-modules java.xml.bind --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
 ENV JENKINS_OPTS "--enable-future-java"
 #ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
 # -Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy \
