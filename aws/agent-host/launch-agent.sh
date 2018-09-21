@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Setup
-sudo yum install -y docker && sudo service docker start && sudo su
+source "../settings.sh"
 
 # Launch worker
 docker run --rm -d \
-  --add-host jenkins:10.0.0.55 --add-host gitserver:10.0.0.13 \
+  --add-host jenkins:${IP_JENKINS_MASTER} --add-host gitserver:${IP_UTIL_CONTAINERS} \
   --name agent -l role=agent \
   -e "COMMAND_OPTIONS=-master http://jenkins:8080 -executors $(nproc) -description swarm-slave" \
   svanoort/jenkins-swarm-agent-mvn:1.0

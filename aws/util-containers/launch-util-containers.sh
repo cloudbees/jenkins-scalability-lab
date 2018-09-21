@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Setup
-sudo yum install -y docker && sudo service docker start && sudo su
+source "../settings.sh"
 
 # Launch the influx instance
 docker run -d --rm -h influx --name influx \
@@ -15,4 +14,4 @@ docker run --rm -d -p 2222:2222 \
    -h gitserver \
    --name gitserver -l role=gitserver \
    -v "/tmp/keys:/git-server/keys" \
-   svanoort/hydra-gitserver:1.0
+   temp-gitserver:1.0
