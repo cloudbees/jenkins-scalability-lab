@@ -1,4 +1,4 @@
-FROM jenkins/jenkins-experimental:latest-jdk10
+FROM jenkins/jenkins-experimental:java11-support-on-jdk8
 
 MAINTAINER svanoort
 
@@ -32,9 +32,9 @@ COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 COPY minimal-plugins.txt /usr/share/jenkins/ref/minimal-plugins.txt
 RUN mkdir -p /usr/share/jenkins/ref/plugins \
     && echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
-    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/plugins.txt | tr '\n' ' ')
+    && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
-    && /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/ref/minimal-plugins.txt | tr '\n' ' ')
+    && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/minimal-plugins.txt
 COPY CUSTOM-PLUGINS/*.*pi /usr/share/jenkins/ref/plugins/
 
 # Remove stale executor files and rename HPI files to JPI files to input custom versions
@@ -48,7 +48,7 @@ COPY jenkins.* /usr/share/jenkins/ref/
 
 # Below makes graphite metrics report more often and adds support for attaching a remote debugger
 # Becomes JENKINS_JAVA_OPTIONS in later Docker image versions
-ENV JAVA_OPTS "--add-modules java.xml.bind --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
+#ENV JAVA_OPTS "--add-modules java.xml.bind --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
 ENV JENKINS_OPTS "--enable-future-java"
 #ENV JAVA_OPTS "-Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
 # -Xloggc:/tmp/gc-%t.log -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCCause -XX:+PrintTenuringDistribution -XX:+PrintReferenceGC -XX:+PrintAdaptiveSizePolicy \
@@ -57,15 +57,8 @@ ENV JENKINS_OPTS "--enable-future-java"
 # Note: need to get hostname of the VM for cases where we're on Mac
 # Note that we can't disable the setup wizard with: -Dhudson.Main.development=true -Djenkins.install.runSetupWizard=false -Djenkins.install.UpgradeWizard.show=false
 
-# RSA key hack, try to set it up so it doesn't use tmp in the near future
-USER root
-COPY id_rsa* /usr/share/jenkins/ref/
-
 # Let's try copying a maven config over.
 COPY jenkins.mvn.GlobalMavenConfig.xml /usr/share/jenkins/ref/
 COPY hudson.tasks.Maven.xml /usr/share/jenkins/ref/
 
-# Chown and chmod files copied in from externally
-RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/id_rsa* \
-    && chmod 600 usr/share/jenkins/ref/id_rsa*
 USER jenkins
