@@ -45,6 +45,12 @@ This single tar.gz file can be copied from that host (for example via SCP) and l
 * (snapshot-versioned or otherwise customized) to directly land on the masters.  This is useful for testing one-off changes or using specific builds to test something (or for unreleased content)
 * jenkins/minimal-plugins.txt defines the minimal plugins needed to create a functional master for testing practices (once their dependencies are also installed)
 * You can customize the initial setup of the master by modifying jenkins/loadtestsetup.groovy, for example to modify security setup or add users.  Note that **you must make the Groovy commands idempotent, because this will run every time you start the Docker image baked from it.**
+* To grab a heap dump (not you must have the debug symbols installed, per the above): 
+    - `docker exec -it -u jenkins jenkins bash`
+    - `jmap -dump:live,format=b,file=/tmp/heapdump.bin 9`
+    - `docker cp jenkins:/tmp/heapdump.bin ./heapdump.bin`
+* 
+ `jmap -dump:live,file=/tmp/heapdump.hprof 9` (where 9 is the process ID)
 
 ## Git Server: testcases, shared libraries and testcase data
 
