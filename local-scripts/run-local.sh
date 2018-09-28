@@ -58,6 +58,7 @@ docker run --rm -d --network scalability-bridge \
 # "--tmpfs /tmp" would give more accurate performance, but creates a permissions issue and thinks freespace low
 # Cap add for sys ptrace is for syscall info
 docker run --cap-add=SYS_PTRACE --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
+  -e GIT_PRIVATE_KEY="$(cat $(pwd)/id_rsa)" \
   -p 8080:8080 -p 9011:9011 -p 50000:50000 \
   -v jenkins_home:/var/jenkins_home \
   --device-write-iops $ROOT_BLKDEV:2000 --device-write-bps $ROOT_BLKDEV:200mb --device-read-iops $ROOT_BLKDEV:2000 --device-read-bps $ROOT_BLKDEV:200mb \
