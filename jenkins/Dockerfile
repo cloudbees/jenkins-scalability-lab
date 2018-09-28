@@ -30,12 +30,9 @@ ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/full-start.sh"]
 # Lock files write is a workaround for a bug in plugin install file where it tries to remove nonexistent lock
 # Basic config - install custom and test framework plugins + custom snapshots
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-COPY minimal-plugins.txt /usr/share/jenkins/ref/minimal-plugins.txt
 RUN mkdir -p /usr/share/jenkins/ref/plugins \
     && echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
     && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
-RUN echo 'placeholder' > /usr/share/jenkins/ref/plugins/placeholder.lock \
-    && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/minimal-plugins.txt
 COPY CUSTOM-PLUGINS/*.*pi /usr/share/jenkins/ref/plugins/
 
 # Remove stale executor files and rename HPI files to JPI files to input custom versions

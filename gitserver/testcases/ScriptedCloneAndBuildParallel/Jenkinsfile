@@ -1,0 +1,38 @@
+def x = [:]
+for (def i=0; i<15; i++) {
+    def j = i;
+    x.put("branch${i}", {
+    node {
+
+        // TODO:copy-paste
+        // Figure out why the Global Tools stuff refuses to work.
+        // withEnv(["JAVA_HOME=${ tool 'jdk8' }", "PATH+MAVEN=${tool 'maven'}/bin:${env.JAVA_HOME}/bin"]) {
+
+            stage ('Sanity Check') {
+                echo "Where is maven?"
+                sh "which mvn"
+                echo "Where is java?"
+                sh "which java"
+            }
+
+            stage('Check out') {
+                git (credentialsId: "git-ssh", url: "ssh://git@gitserver:2222/git-server/repos/simple-maven-project-with-tests.git")
+            }
+
+            stage('Build it') {
+                // Old, fancy way which never worked:
+                //   sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+                // New, simple way which works fine:
+                sh "mvn -Dmaven.test.failure.ignore clean package"
+            }
+
+            stage('Archive our results') {
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archive 'target/*.jar'
+            }
+        // } // ends the withEnv block
+
+    }})
+}
+
+parallel(x)

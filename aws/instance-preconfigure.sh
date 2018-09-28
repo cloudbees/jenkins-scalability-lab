@@ -7,6 +7,6 @@ sudo yum install -y git
 sudo yum install -y docker && sudo service docker start
 sudo chkconfig docker on
 sudo groupadd docker || echo "Group already exists"
-sudo usermod -aG docker $USER
+sudo usermod -aG docker ec2-user
 
 # Add Maven installation?
