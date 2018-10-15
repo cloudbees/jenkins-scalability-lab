@@ -16,7 +16,7 @@ ROOT_BLKDEV="/dev/$ROOT_BLKDEV_NAME"
 echo "BLOCK DEVICE ID IS $ROOT_BLKDEV"
 
 # Start git server, see keys from https://github.com/jkarlosb/git-server-docker
-docker run --rm -d -p 2222:2222 \
+docker run --rm -d -p 127.0.0.1:2222:2222 \
    --network scalability-bridge \
    -h gitserver \
    --name gitserver -l role=gitserver \
@@ -34,7 +34,7 @@ docker run --rm -d -p 2222:2222 \
 # May need to play with the template because it truncates hostname
 # From: https://github.com/appcelerator/docker-influxdb
 docker run -d --rm -h influx --name influx --network scalability-bridge \
- -p 8083:8083 -p 8086:8086 -p 2015:2015 \
+ -p 127.0.0.1:8083:8083 -p 127.0.0.1:8086:8086 -p 127.0.0.1:2015:2015 \
  -e ADMIN_USER="root" -e INFLUXDB_INIT_PWD="somepassword" -e PRE_CREATE_DB=hydra \
  -e GRAPHITE_DB="hydra" -e GRAPHITE_BINDING=':2015' -e GRAPHITE_PROTOCOL="tcp" \
  -e GRAPHITE_template="measurement*" appcelerator/influxdb:influxdb-1.2.2
@@ -45,7 +45,7 @@ docker run -d --rm -h influx --name influx --network scalability-bridge \
 docker run --rm -d --network scalability-bridge \
   -e ROOT_BLKDEV_NAME=$ROOT_BLKDEV_NAME \
   -h grafana --name grafana \
-  -p 81:3000 \
+  -p 127.0.0.1:81:3000 \
   temp-grafana:1.0
 
 # Autoconnects & creates agents
@@ -59,7 +59,7 @@ docker run --rm -d --network scalability-bridge \
 # Cap add for sys ptrace is for syscall info
 docker run --cap-add=SYS_PTRACE --rm -it -h jenkins --name jenkins -l role=jenkins --network scalability-bridge \
   -e GIT_PRIVATE_KEY="$(cat $(pwd)/id_rsa)" \
-  -p 8080:8080 -p 9011:9011 -p 50000:50000 \
+  -p 127.0.0.1:8080:8080 -p 127.0.0.1:9011:9011 -p 127.0.0.1:50000:50000 \
   -v jenkins_home:/var/jenkins_home \
   --device-write-iops $ROOT_BLKDEV:2000 --device-write-bps $ROOT_BLKDEV:200mb --device-read-iops $ROOT_BLKDEV:2000 --device-read-bps $ROOT_BLKDEV:200mb \
   temp-jenkins-scalability-master:1.0
