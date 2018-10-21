@@ -11,6 +11,7 @@ Testbed for measuring scalability of Jenkins.
     - Because of the use of a persistent volume, manual jenkins configuration will be retained between runs, but you can clear configuration with `docker volume rm jenkins_home`
     - Your gitserver repo data will be lost (that's fine, it's copied from a local folder)
     - All of your InfluxDB data will be lost
+* **Troubleshooting a Docker error about binding to port 2015**: often this port is used for VPN software and this can result in a conflict. To solve the error, either shut down your VPN service or you will need to change the port used for InfluxDB Graphite listener (`local-scripts/run-local.sh` for Influx configuration, and also change the port used to report metrics from Jenkins in `jenkins/loadtestsetup.groovy`)
 
 # AWS Usage
 * See subfolder "aws" which has docs and scripts (requires SSH access to a couple hosts)
