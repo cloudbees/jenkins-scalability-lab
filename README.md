@@ -1,6 +1,9 @@
 # jenkins-scalability-lab
 Testbed for measuring scalability of Jenkins.
 
+# Requirements
+* Docker 17.09 or higher (due to the fix to [Issue #6119](https://github.com/moby/moby/issues/6119))
+
 # Local Usage
 * For custom testcases, at the moment you may wish to create branches for your scenarios
 * To build everything and bring up the environment, go to the 'local' folder and run `./build-local.sh`
