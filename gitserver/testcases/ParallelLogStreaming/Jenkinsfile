@@ -3,7 +3,7 @@
 def notify(msg) {
     doNotify msg
     sh '''
-        cat /dev/urandom | env LC_CTYPE=c tr -dc '[:alpha:]\n' | awk '{print $0; system("sleep .1");}' | head -c 500000
+        cat /dev/urandom | env LC_CTYPE=c tr -dc '[:alpha:]\n' | awk '{print $0; system("sleep .1");}'
     '''
 }
 def doNotify(msg) {
