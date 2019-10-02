@@ -51,10 +51,25 @@ This single tar.gz file can be copied from that host (for example via SCP) and l
 * You can customize the initial setup of the master by modifying jenkins/loadtestsetup.groovy, for example to modify security setup or add users.  Note that **you must make the Groovy commands idempotent, because this will run every time you start the Docker image baked from it.**
 * To grab a heap dump (note that you must have the java debug symbols installed, i.e. package openjdk-8-dbg/stable): 
     - `docker exec -it -u jenkins jenkins bash`
-    - `jmap -dump:live,format=b,file=/tmp/heapdump.bin 9`
+
+        You'll be running a shell inside of the Jenkins docker container under test. Now, run:
+
+        ```
+        jenkins@jenkins:/$ ps -ef
+        UID        PID  PPID  C STIME TTY          TIME CMD
+        jenkins      1     0  0 18:55 pts/0    00:00:00 /sbin/tini -- /usr/local/bin/full-start.sh
+        jenkins      9     1  0 18:55 pts/0    00:00:00 /bin/bash /usr/local/bin/full-start.sh
+        jenkins     10     9  1 18:55 pts/0    00:02:22 telegraf
+        jenkins     11     9 79 18:55 pts/0    01:50:25 java -Duser.home=/var/jenkins_home -Dgraphite.metrics.intervalSeconds=10 -Dcom.sun.management.jmxremote -Dcom.sun.manag
+        ```
+        In our example, Jenkins is running under PID 11. Meaning we can now run:
+
+    - `jmap -dump:live,format=b,file=/tmp/heapdump.bin 11`
+    
+        Which will save the file to disk. Now, exit the docker container with `exit`, and from your host machine, run:
+
     - `docker cp jenkins:/tmp/heapdump.bin ./heapdump.bin`
-* 
- `jmap -dump:live,file=/tmp/heapdump.hprof 9` (where 9 is the process ID)
+* From here, you can use your favorite heap analysis tool, like maybe visualvm, to look at what's going on.
 
 ## Git Server: testcases, shared libraries and testcase data
 
