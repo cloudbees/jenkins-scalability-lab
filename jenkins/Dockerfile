@@ -1,6 +1,5 @@
+# No longer jenkinsci/jenkins.
 FROM jenkins/jenkins
-
-MAINTAINER kshultz
 
 # Install telegraf for monitoring && set up telegraf as sudoer so they can launch telegraf as root for extra disk stats
 # Also you need openjdk-8-dbg/stable to get the debugging symbols for heap dumps
