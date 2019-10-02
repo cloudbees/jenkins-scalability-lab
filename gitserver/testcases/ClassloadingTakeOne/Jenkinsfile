@@ -1,8 +1,3 @@
-/*
-Devin's incredibly clever way to do this testing follows below. This 
-is lifted in its entirety from a ticket.
-*/
-
 // Property accesses like `map.A` cause Groovy to try to load `map$A` and `map.A` as classes.
 def map = ['A': ['B': ['C': ['D': ['E': ['F': true]]]]]]
 def a = map.A
@@ -27,10 +22,10 @@ def fC = c.D.E.F
 def fD = d.E.F
 def fE = e.F
 
-// Clears out the cache before PR 265, could happen if Jenkins was under heavy load
+// Clears out the cache before PR script-security 1.66. Possible if Jenkins is 
+// under heavy load. 
 System.gc()
 
-// Load all of the same classes again
 map = ['A': ['B': ['C': ['D': ['E': ['F': true]]]]]]
 a = map.A
 b = map.A.B
@@ -57,4 +52,3 @@ abc = map.A.B.C
 abcd = map.A.B.D
 abcde = map.A.B.C.D.E
 abcdef = map.A.B.C.D.E.F
-
