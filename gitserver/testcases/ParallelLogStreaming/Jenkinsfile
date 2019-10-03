@@ -1,0 +1,22 @@
+// Strains interleaved parallel logging with 15 parallel streams writing at 10 lines per second each
+
+def x = [:]
+for (def i=0; i<15; i++) {
+    def branch = "branch${i}"
+    x.put(branch, { 
+        node {
+            withEnv(["BRANCH=$branch"]) {
+                timeout(activity: true, time: 1, unit: 'HOURS') {
+                    timestamps {
+                        sh '''
+                            cat /dev/urandom | env LC_CTYPE=c tr -dc '[:alpha:]\n' | awk '{print ENVIRON["BRANCH"], $0; system("sleep .1");}'
+                        '''
+                    }
+                }
+            }
+        }
+      }
+    )
+}
+
+parallel(x)
