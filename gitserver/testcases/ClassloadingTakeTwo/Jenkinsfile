@@ -1,0 +1,67 @@
+def r = Math.random()
+def maybeRunGC = { threshold ->
+    if (r > threshold - 0.1 && r < threshold) {
+        // Clears out the cache before PR 265, could happen if Jenkins was under heavy load
+        System.gc();
+    } else {
+        // Introduce some variability
+        Thread.sleep(100);
+    }
+}
+
+def map = ['A': ['B': ['C': ['D': ['E': ['F': true]]]]]]
+def a = map.A
+maybeRunGC(0.1)
+def b = map.A.B
+def bA = a.B
+maybeRunGC(0.2)
+def c = map.A.B.C
+def cA = a.B.C
+def cB = b.C
+maybeRunGC(0.3)
+def d = map.A.B.C.D
+def dA = a.B.C.D
+def dB = b.C.D
+def dC = c.D
+maybeRunGC(0.4)
+def e = map.A.B.C.D.E
+def eA = a.B.C.D.E
+def eB = b.C.D.E
+def eC = c.D.E
+def eD = d.E
+maybeRunGC(0.5)
+def f = map.A.B.C.D.E.F
+def fA = a.B.C.D.E.F
+def fB = b.C.D.E.F
+def fC = c.D.E.F
+def fD = d.E.F
+def fE = e.F
+
+// Load all of the same classes again
+a = map.A
+maybeRunGC(0.6)
+b = map.A.B
+bA = a.B
+maybeRunGC(0.7)
+c = map.A.B.C
+cA = a.B.C
+cB = b.C
+maybeRunGC(0.8)
+d = map.A.B.C.D
+dA = a.B.C.D
+dB = b.C.D
+dC = c.D
+maybeRunGC(0.9)
+e = map.A.B.C.D.E
+eA = a.B.C.D.E
+eB = b.C.D.E
+eC = c.D.E
+eD = d.E
+maybeRunGC(1.0)
+f = map.A.B.C.D.E.F
+fA = a.B.C.D.E.F
+fB = b.C.D.E.F
+fC = c.D.E.F
+fD = d.E.F
+fE = e.F
+

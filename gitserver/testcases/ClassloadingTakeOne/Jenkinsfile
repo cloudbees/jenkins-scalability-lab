@@ -1,0 +1,54 @@
+// Property accesses like `map.A` cause Groovy to try to load `map$A` and `map.A` as classes.
+def map = ['A': ['B': ['C': ['D': ['E': ['F': true]]]]]]
+def a = map.A
+def b = map.A.B
+def bA = a.B
+def c = map.A.B.C
+def cA = a.B.C
+def cB = b.C
+def d = map.A.B.C.D
+def dA = a.B.C.D
+def dB = b.C.D
+def dC = c.D
+def e = map.A.B.C.D.E
+def eA = a.B.C.D.E
+def eB = b.C.D.E
+def eC = c.D.E
+def eD = d.E
+def f = map.A.B.C.D.E.F
+def fA = a.B.C.D.E.F
+def fB = b.C.D.E.F
+def fC = c.D.E.F
+def fD = d.E.F
+def fE = e.F
+
+// Clears out the cache before PR script-security 1.66. Possible if Jenkins is 
+// under heavy load. 
+System.gc()
+
+map = ['A': ['B': ['C': ['D': ['E': ['F': true]]]]]]
+a = map.A
+b = map.A.B
+bA = a.B
+c = map.A.B.C
+cA = a.B.C
+cB = b.C
+d = map.A.B.C.D
+dA = a.B.C.D
+dB = b.C.D
+dC = c.D
+e = map.A.B.C.D.E
+eA = a.B.C.D.E
+eB = b.C.D.E
+eC = c.D.E
+eD = d.E
+f = map.A.B.C.D.E.F
+fA = a.B.C.D.E.F
+fB = b.C.D.E.F
+fC = c.D.E.F
+fD = d.E.F
+fE = e.F
+abc = map.A.B.C
+abcd = map.A.B.D
+abcde = map.A.B.C.D.E
+abcdef = map.A.B.C.D.E.F
